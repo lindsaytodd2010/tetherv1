@@ -10,6 +10,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Tether">
 
+    <!-- 100% Self-Contained High-Res iOS Home Screen Icon (Design: Slate-dark backdrop with glowing Tether connection nodes) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180' width='180' height='180'><rect width='180' height='180' rx='40' fill='%230f172a'/><g transform='translate(15, 15) scale(0.83)'><circle cx='60' cy='120' r='18' fill='none' stroke='%23ffffff' stroke-width='8'/><circle cx='120' cy='60' r='18' fill='none' stroke='%23ffffff' stroke-width='8'/><line x1='73' y1='107' x2='107' y2='73' stroke='%23ffffff' stroke-width='8' stroke-linecap='round'/><circle cx='90' cy='90' r='8' fill='%230f766e'/></g></svg>">
+
     <!-- Tailwind CSS for modern responsive styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -124,13 +127,13 @@
                 </div>
                 <!-- Sleek compact icon toggle to hide scheduled plans -->
                 <button id="btn-hide-scheduled" onclick="toggleHideScheduled()" class="h-11 w-11 shrink-0 bg-white border border-slate-200 hover:bg-slate-50 flex items-center justify-center rounded-2xl transition-all shadow-sm" title="Hide Scheduled Plans">
-                    <i data-lucide="calendar-off" class="w-4.5 h-4.5 text-slate-500"></i>
+                    <i data-lucide="calendar-off" class="w-4.5 h-4.5 text-slate-505"></i>
                 </button>
             </div>
 
             <div class="space-y-3">
                 <div class="flex justify-between items-center px-0.5">
-                    <h2 class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">My Connections</h2>
+                    <h2 class="text-[11px] font-bold tracking-wider text-slate-550 uppercase">My Connections</h2>
                     <span id="filter-indicator" class="text-[10px] text-brand-muted">Tap card for history</span>
                 </div>
                 
@@ -155,7 +158,7 @@
                         <i data-lucide="sliders" class="w-4.5 h-4.5 text-brand-accent"></i>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Status Warning Thresholds</h4>
+                        <h4 class="text-xs font-bold text-slate-805 uppercase tracking-wider">Status Warning Thresholds</h4>
                         <p class="text-[10px] text-brand-muted">Define warning stages for intervals</p>
                     </div>
                 </div>
@@ -215,7 +218,7 @@
                 <i data-lucide="users" class="w-5 h-5"></i>
                 <span class="text-[10px] font-bold">People</span>
             </button>
-            <button onclick="switchTab('settings')" id="nav-settings" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-650 transition-all">
+            <button onclick="switchTab('settings')" id="nav-settings" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-all">
                 <i data-lucide="settings" class="w-5 h-5"></i>
                 <span class="text-[10px] font-bold">Settings</span>
             </button>
@@ -275,7 +278,7 @@
 
                     <!-- Dynamic FUTURE AREA (Activity Name) -->
                     <div id="dynamic-future-area" class="space-y-1 hidden">
-                        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">What are you planning?</label>
+                        <label class="text-[9px] font-bold text-slate-505 uppercase tracking-wider block">What are you planning?</label>
                         <input type="text" id="plan-activity" placeholder="e.g. Catch-up Dinner, Coffee Date" class="w-full bg-slate-50 border border-slate-200 focus:border-brand-accent rounded-lg py-2 px-3 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all shadow-sm">
                     </div>
 
@@ -301,7 +304,7 @@
                                     <span class="text-[11px] font-semibold">Voice Note</span>
                                 </button>
                                 <!-- col-span-2 button is kept centered and spans full width -->
-                                <button onclick="selectLogOption('channel', 'In Person')" id="btn-chan-In-Person" class="channel-opt bg-slate-50 border border-slate-200 py-2 rounded-lg flex items-center justify-center gap-1.5 col-span-2 transition-all text-slate-700">
+                                <button onclick="selectLogOption('channel', 'In Person')" id="btn-chan-In-Person" class="channel-opt bg-slate-50 border border-slate-200 py-2 rounded-lg flex items-center justify-center gap-1.5 col-span-2 transition-all text-slate-755">
                                     <i data-lucide="coffee" class="w-3.5 h-3.5 text-slate-700"></i>
                                     <span class="text-[11px] font-semibold">In Person</span>
                                 </button>
@@ -373,7 +376,7 @@
                 <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto -mt-2 mb-2 shrink-0"></div>
 
                 <div class="flex justify-between items-center">
-                    <h3 class="text-base font-bold text-slate-800">Add to Tether</h3>
+                    <h3 class="text-base font-bold text-slate-805">Add to Tether</h3>
                     <button onclick="closeModal('add-modal')" class="text-slate-400 hover:text-slate-655 bg-slate-100 p-1.5 rounded-full border border-slate-200 animate-fade">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
@@ -426,20 +429,20 @@
                 <div class="flex justify-between items-start shrink-0">
                     <div class="space-y-1">
                         <div class="flex items-center gap-2">
-                            <h3 id="detail-name" class="text-xl font-extrabold text-slate-800">Marcus Thompson</h3>
+                            <h3 id="detail-name" class="text-xl font-extrabold text-slate-855">Marcus Thompson</h3>
                             <span id="detail-status-badge" class="text-[9px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-brand-green/20 text-brand-green border border-brand-green/30">Tethered</span>
                         </div>
-                        <div class="flex items-center gap-1.5 text-xs text-slate-500">
+                        <div class="flex items-center gap-1.5 text-xs text-slate-505">
                             <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-500"></i>
                             <span id="detail-location-text" class="font-medium">Chicago, IL</span>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="toggleEditMode()" class="text-slate-400 hover:text-slate-600 bg-slate-100 p-2.5 rounded-full border border-slate-200 flex items-center justify-center">
+                        <button onclick="toggleEditMode()" class="text-slate-400 hover:text-slate-655 bg-slate-100 p-2.5 rounded-full border border-slate-200 flex items-center justify-center">
                             <span id="icon-mode-view"><i data-lucide="pencil" class="w-4 h-4"></i></span>
                             <span id="icon-mode-edit" class="hidden"><i data-lucide="arrow-left" class="w-4 h-4"></i></span>
                         </button>
-                        <button onclick="closeModal('detail-modal')" class="text-slate-400 hover:text-slate-600 bg-slate-100 p-2.5 rounded-full border border-slate-200">
+                        <button onclick="closeModal('detail-modal')" class="text-slate-400 hover:text-slate-655 bg-slate-100 p-2.5 rounded-full border border-slate-200">
                             <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -454,14 +457,14 @@
 
                     <!-- UPCOMING PLANS INTEGRATED COMPONENT -->
                     <div id="upcoming-plans-container" class="space-y-2 shrink-0 hidden">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Upcoming Plan</span>
+                        <span class="text-[10px] font-bold text-slate-505 uppercase tracking-wider block">Upcoming Plan</span>
                         
                         <!-- If plan exists -->
                         <div id="detail-upcoming-card" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3 hidden shadow-sm">
                             <div class="flex justify-between items-start">
                                 <div class="flex items-center gap-1.5">
                                     <i data-lucide="calendar" class="w-4 h-4 text-brand-accent animate-pulse"></i>
-                                    <span class="text-xs font-bold text-slate-800">Plan Scheduled</span>
+                                    <span class="text-xs font-bold text-slate-850">Plan Scheduled</span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <!-- Edit Plan Button -->
@@ -472,7 +475,7 @@
                                 </div>
                             </div>
                             <div class="space-y-1">
-                                <h5 id="detail-upcoming-event" class="text-xs font-bold text-slate-800">Catch-up Dinner</h5>
+                                <h5 id="detail-upcoming-event" class="text-xs font-bold text-slate-855">Catch-up Dinner</h5>
                                 <p id="detail-upcoming-date" class="text-[11px] text-brand-accent font-semibold">Thursday, Jun 4</p>
                                 <p id="detail-upcoming-notes" class="text-[11px] text-slate-505 italic leading-relaxed">"Lou's Pizza at 7 PM"</p>
                             </div>
@@ -485,20 +488,20 @@
 
                     <!-- FILTERABLE TIMELINE CHIPS COMPONENT -->
                     <div class="space-y-1.5 shrink-0">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Filter History By</span>
+                        <span class="text-[10px] font-bold text-slate-550 uppercase tracking-wider block">Filter History By</span>
                         <div class="flex gap-1.5 overflow-x-auto pb-1.5 no-scrollbar text-[11px]">
                             <button onclick="filterHistory('All')" id="btn-hist-All" class="hist-filter-btn px-3 py-1 rounded-full font-bold bg-brand-accent text-white shrink-0 transition-all">All</button>
-                            <button onclick="filterHistory('Text')" id="btn-hist-Text" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-500 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Text Msg</button>
-                            <button onclick="filterHistory('Call')" id="btn-hist-Call" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-500 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Voice Call</button>
-                            <button onclick="filterHistory('Video Call')" id="btn-hist-Video-Call" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-500 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Video</button>
-                            <button onclick="filterHistory('Voice Note')" id="btn-hist-Voice-Note" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-500 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Voice Note</button>
-                            <button onclick="filterHistory('In Person')" id="btn-hist-In-Person" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-500 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">In Person</button>
+                            <button onclick="filterHistory('Text')" id="btn-hist-Text" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-505 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Text Msg</button>
+                            <button onclick="filterHistory('Call')" id="btn-hist-Call" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-550 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Voice Call</button>
+                            <button onclick="filterHistory('Video Call')" id="btn-hist-Video-Call" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-550 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Video</button>
+                            <button onclick="filterHistory('Voice Note')" id="btn-hist-Voice-Note" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-555 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Voice Note</button>
+                            <button onclick="filterHistory('In Person')" id="btn-hist-In-Person" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-555 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">In Person</button>
                         </div>
                     </div>
 
                     <!-- Connection History Log (Scrollable Timeline) -->
                     <div class="flex-1 flex flex-col min-h-0 space-y-2">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Interaction History</span>
+                        <span class="text-[10px] font-bold text-slate-555 uppercase tracking-wider block">Interaction History</span>
                         
                         <div class="flex-1 overflow-y-auto pr-1">
                             <div id="detail-history-timeline" class="relative pl-5 border-l border-slate-200 space-y-4 ml-2 pb-6">
@@ -520,24 +523,24 @@
 
                 <!-- Editable Form Section -->
                 <div id="profile-edit-section" class="hidden flex-1 flex flex-col min-h-0 space-y-4">
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Modify Friend Settings</span>
+                    <span class="text-[10px] font-bold text-slate-555 uppercase tracking-wider block">Modify Friend Settings</span>
                     
                     <div class="space-y-3 flex-1 overflow-y-auto pr-1">
                         <!-- Edit Name -->
                         <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Full Name</label>
-                            <input type="text" id="edit-name-field" class="w-full bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-2.5 px-4 text-xs text-slate-805 placeholder-slate-400 outline-none transition-all">
+                            <label class="text-[10px] font-bold text-slate-555 uppercase tracking-wider block">Full Name</label>
+                            <input type="text" id="edit-name-field" class="w-full bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-2.5 px-4 text-xs text-slate-855 placeholder-slate-400 outline-none transition-all">
                         </div>
 
                         <!-- Edit Location -->
                         <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Location (Optional)</label>
-                            <input type="text" id="edit-location-field" class="w-full bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-2.5 px-4 text-xs text-slate-805 placeholder-slate-400 outline-none transition-all">
+                            <label class="text-[10px] font-bold text-slate-550 uppercase tracking-wider block">Location (Optional)</label>
+                            <input type="text" id="edit-location-field" class="w-full bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-2.5 px-4 text-xs text-slate-855 placeholder-slate-400 outline-none transition-all">
                         </div>
 
                         <!-- Edit Cadence Selection -->
                         <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Set Keep-in-Touch Cadence</label>
+                            <label class="text-[10px] font-bold text-slate-555 uppercase tracking-wider block">Set Keep-in-Touch Cadence</label>
                             <div class="flex gap-2">
                                 <input type="number" id="edit-cadence-number" min="1" max="365" class="w-1/3 bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-2.5 text-center text-xs text-slate-800 outline-none font-bold transition-all">
                                 <div class="relative flex-1">
@@ -560,7 +563,7 @@
                             <i data-lucide="save" class="w-4 h-4"></i> Save Settings
                         </button>
                         <button onclick="deleteConnection()" class="w-full bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5">
-                            <i data-lucide="trash-2" class="w-4 h-4 text-rose-500"></i> Untether Connection
+                            <i data-lucide="trash-2" class="w-4 h-4 text-rose-550"></i> Untether Connection
                         </button>
                     </div>
                 </div>
@@ -579,7 +582,7 @@
                         <h3 class="text-base font-bold text-slate-805">Select Date</h3>
                         <p id="calendar-subtitle" class="text-[10px] text-brand-muted uppercase tracking-wider font-semibold">Tether Calendar</p>
                     </div>
-                    <button onclick="closeModal('calendar-modal')" class="text-slate-400 hover:text-white bg-slate-100 p-1.5 rounded-full border border-slate-200">
+                    <button onclick="closeModal('calendar-modal')" class="text-slate-400 hover:text-slate-655 bg-white rounded-lg border border-slate-200">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -831,7 +834,6 @@
             return `${sMonth} ${sDay} - ${eDay}, ${sYear}`;
         }
 
-        // Restored missing openModal function
         function openModal(id) {
             const modal = document.getElementById(id);
             if (!modal) return;
@@ -847,7 +849,6 @@
             }, 10);
         }
 
-        // Restored missing closeModal function
         function closeModal(id) {
             const modal = document.getElementById(id);
             if (!modal) return;
@@ -1027,7 +1028,7 @@
         function filterHistory(channel) {
             activeHistoryFilter = channel;
             document.querySelectorAll('.hist-filter-btn').forEach(btn => {
-                btn.className = "hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-500 border border-slate-200 hover:text-slate-800 shrink-0 transition-all";
+                btn.className = "hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-505 border border-slate-200 hover:text-slate-800 shrink-0 transition-all";
             });
             const filterBtn = document.getElementById(`btn-hist-${channel.replace(/\s+/g, '-')}`);
             if (filterBtn) {
@@ -1078,7 +1079,7 @@
                     iconName = "mic";
                 }
 
-                const depthBadgeColor = item.depth === 'meaningful' ? 'text-slate-800 border-slate-200 bg-slate-100' : 'text-slate-600 border-slate-150 bg-slate-50';
+                const depthBadgeColor = item.depth === 'meaningful' ? 'text-slate-800 border-slate-200 bg-slate-100' : 'text-slate-605 border-slate-150 bg-slate-50';
                 const depthText = item.depth === 'meaningful' ? 'Good Catch Up' : 'Quick Hi';
                 
                 const dateLabel = item.endDate ? formatRangeFriendly(item.date, item.endDate) : formatFriendlyDate(item.date);
@@ -1092,7 +1093,7 @@
                         <div class="flex justify-between items-center">
                             <span class="text-xs font-bold text-slate-800">${item.channel}</span>
                             <div class="flex items-center gap-2">
-                                <span class="text-[9px] text-slate-500 font-medium">${dateLabel}</span>
+                                <span class="text-[9px] text-slate-505 font-medium">${dateLabel}</span>
                                 
                                 <!-- Sleek inline controls -->
                                 <div class="flex items-center gap-1.5 ml-1">
@@ -1141,7 +1142,7 @@
 
             if (contact.daysSince >= fadeLimit) {
                 statusText = "Fading";
-                badgeClass = "bg-brand-red/20 text-brand-red border-brand-red/30";
+                badgeClass = "bg-brand-red/20 text-brand-red border border-brand-red/30";
             } else if (contact.daysSince >= driftLimit) {
                 statusText = "Drifting";
                 badgeClass = "bg-brand-yellow/20 text-brand-yellow border-brand-yellow/30";
@@ -1479,7 +1480,7 @@
                 renderDashboard();
                 
                 if (sharedContacts.length > 1) {
-                    showToast(`Logged group interaction for participants of "${plan.event}"!`);
+                    showToast("Logged group interaction!");
                 } else {
                     showToast(`Logged interaction for ${contact.name}!`);
                 }
@@ -2008,15 +2009,8 @@
                     openDetailView(c.id);
                 };
 
-                let iconMarkup = '<i data-lucide="message-square" class="w-3.5 h-3.5 inline"></i>';
-                if (c.lastWay === 'Call') iconMarkup = '<i data-lucide="phone" class="w-3.5 h-3.5 inline"></i>';
-                if (c.lastWay === 'In Person') iconMarkup = '<i data-lucide="coffee" class="w-3.5 h-3.5 inline"></i>';
-                if (c.lastWay === 'Video Call') iconMarkup = '<i data-lucide="video" class="w-3.5 h-3.5 inline"></i>';
-                if (c.lastWay === 'Voice Note') iconMarkup = '<i data-lucide="mic" class="w-3.5 h-3.5 inline">5</i>';
-
                 const scheduledDateLabel = c.upcoming ? (c.upcoming.endDate ? formatRangeFriendly(c.upcoming.date, c.upcoming.endDate) : formatFriendlyDate(c.upcoming.date)) : '';
 
-                // REMOVED frequency intervals from friend list card
                 card.innerHTML = `
                     <div class="flex items-start justify-between gap-3 min-w-0">
                         <div class="space-y-1.5 min-w-0 flex-1">
@@ -2041,7 +2035,6 @@
                                 ${c.location ? `<span>•</span> <span class="flex items-center gap-1 text-slate-500"><i data-lucide="map-pin" class="w-3 h-3 text-rose-500"></i> ${c.location}</span>` : ''}
                             </div>
 
-                            <!-- UPCOMING PLAN CHIP INNER BADGE -->
                             ${c.upcoming ? `
                             <div class="flex items-center gap-1.5 bg-brand-accent/5 border border-brand-accent/15 text-brand-accent text-[10px] px-2.5 py-1.5 rounded-xl mt-2 w-max font-bold shadow-sm">
                                 <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-accent"></i>
@@ -2111,7 +2104,7 @@
                 if (viewSettings) viewSettings.classList.remove('hidden');
             }
 
-            document.querySelectorAll('nav p, nav button').forEach(btn => btn.className = 'flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-all');
+            document.querySelectorAll('nav p, nav button').forEach(btn => btn.className = 'flex flex-col items-center gap-1 text-slate-400 hover:text-slate-605 transition-all');
             const activeNav = document.getElementById(`nav-${tab}`);
             if (activeNav) {
                 activeNav.className = 'flex flex-col items-center gap-1 text-brand-accent transition-all';
