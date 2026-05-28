@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tether - Stay Connected</title>
+
+    <!-- iOS Web App Meta Tags (Enables Standalone Full-Screen Mode) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Tether">
+
     <!-- Tailwind CSS for modern responsive styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -19,7 +25,7 @@
                             cardHover: '#f1f5f9', // Cool Slate-100 Hover state
                             accent: '#0f172a', // Sleek Graphite / Slate-900
                             accentHover: '#1e293b', // Slate-800
-                            muted: '#64748b', // Slate-500
+                            muted: '#64748b', // Slate-505
                             green: '#0f766e', // Sleek Forest Spruce Green
                             yellow: '#ca8a04', // Muted Amber for drifting
                             red: '#991b1b' // Deep Brick Crimson for fading
@@ -107,26 +113,24 @@
                 </div>
             </div>
 
-            <!-- Search Bar Component -->
-            <div class="relative flex items-center shrink-0">
-                <i data-lucide="search" class="absolute left-3.5 w-4 h-4 text-slate-400"></i>
-                <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="Search by name or location..." class="w-full bg-white border border-slate-200 focus:border-brand-accent focus:bg-white rounded-2xl py-3 pl-10 pr-10 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all shadow-sm">
-                <button onclick="clearSearch()" id="clear-search-btn" class="absolute right-3.5 hidden text-slate-400 hover:text-slate-600 transition-colors">
-                    <i data-lucide="x-circle" class="w-4.5 h-4.5"></i>
-                </button>
-            </div>
-
-            <!-- Quick Filter Controls Row -->
-            <div class="flex items-center gap-2 px-0.5 shrink-0">
-                <button id="btn-hide-scheduled" onclick="toggleHideScheduled()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[11px] font-semibold text-slate-600 transition-all shadow-sm">
-                    <i data-lucide="calendar-off" class="w-3.5 h-3.5 text-slate-400"></i>
-                    <span>Hide Scheduled Plans</span>
+            <!-- Search Bar Component & Compact Toggle Row -->
+            <div class="flex items-center gap-2 shrink-0">
+                <div class="relative flex-1 flex items-center">
+                    <i data-lucide="search" class="absolute left-3.5 w-4 h-4 text-slate-400"></i>
+                    <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="Search by name or location..." class="w-full bg-white border border-slate-200 focus:border-brand-accent focus:bg-white rounded-2xl py-3 pl-10 pr-10 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all shadow-sm">
+                    <button onclick="clearSearch()" id="clear-search-btn" class="absolute right-3.5 hidden text-slate-400 hover:text-slate-600 transition-colors">
+                        <i data-lucide="x-circle" class="w-4.5 h-4.5"></i>
+                    </button>
+                </div>
+                <!-- Sleek compact icon toggle to hide scheduled plans -->
+                <button id="btn-hide-scheduled" onclick="toggleHideScheduled()" class="h-11 w-11 shrink-0 bg-white border border-slate-200 hover:bg-slate-50 flex items-center justify-center rounded-2xl transition-all shadow-sm" title="Hide Scheduled Plans">
+                    <i data-lucide="calendar-off" class="w-4.5 h-4.5 text-slate-500"></i>
                 </button>
             </div>
 
             <div class="space-y-3">
                 <div class="flex justify-between items-center px-0.5">
-                    <h2 class="text-[11px] font-bold tracking-wider text-slate-505 uppercase">My Connections</h2>
+                    <h2 class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">My Connections</h2>
                     <span id="filter-indicator" class="text-[10px] text-brand-muted">Tap card for history</span>
                 </div>
                 
@@ -144,29 +148,54 @@
                 <p class="text-xs text-brand-muted">Configure your Tether account and preferences.</p>
             </div>
 
+            <!-- Global Status Thresholds Customizer -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center border border-slate-200 shadow-sm">
+                        <i data-lucide="sliders" class="w-4.5 h-4.5 text-brand-accent"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Status Warning Thresholds</h4>
+                        <p class="text-[10px] text-brand-muted">Define warning stages for intervals</p>
+                    </div>
+                </div>
+                
+                <!-- Drift Threshold Slider -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-700">
+                        <span>Drifting (Yellow) Warning</span>
+                        <span id="label-drift-threshold" class="text-brand-green font-extrabold">80% of interval</span>
+                    </div>
+                    <input type="range" id="input-drift-threshold" min="50" max="100" value="80" oninput="updateGlobalSettingsFromUI()" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-accent focus:outline-none">
+                    <p class="text-[9px] text-brand-muted leading-relaxed">Turn warning status yellow when reached this percentage of keep-in-touch cadence.</p>
+                </div>
+
+                <!-- Fade Threshold Slider -->
+                <div class="space-y-1.5 pt-1">
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-700">
+                        <span>Fading (Red) Overdue Limit</span>
+                        <span id="label-fade-threshold" class="text-brand-red font-extrabold">150% of interval</span>
+                    </div>
+                    <input type="range" id="input-fade-threshold" min="105" max="200" value="150" oninput="updateGlobalSettingsFromUI()" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-accent focus:outline-none">
+                    <p class="text-[9px] text-brand-muted leading-relaxed">Mark status as fading (red) when friend connection exceeds this percentage of their cadence.</p>
+                </div>
+            </div>
+
+            <!-- Standard Notification Toggles -->
             <div class="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-150 overflow-hidden shadow-sm">
                 <div class="p-4 flex justify-between items-center">
                     <div class="space-y-0.5">
-                        <span class="text-sm font-semibold block text-slate-800">Push Notifications</span>
-                        <span class="text-[10px] text-brand-muted block">Alert when friend reaches yellow or red status</span>
-                    </div>
-                    <div class="w-11 h-6 bg-brand-accent rounded-full p-0.5 cursor-pointer flex justify-end items-center">
-                        <div class="bg-white w-5 h-5 rounded-full shadow-sm"></div>
-                    </div>
-                </div>
-                <div class="p-4 flex justify-between items-center">
-                    <div class="space-y-0.5">
                         <span class="text-sm font-semibold block text-slate-800">Smart Location Search</span>
-                        <span class="text-[10px] text-brand-muted block">Index custom cities inside dashboard lists</span>
+                        <span class="text-[10px] text-brand-muted block">Index location tags to search nearby connections</span>
                     </div>
                     <div class="w-11 h-6 bg-brand-accent rounded-full p-0.5 cursor-pointer flex justify-end items-center">
-                        <div class="bg-white w-5 h-5 rounded-full shadow-sm"></div>
+                        <div class="bg-white w-5 h-5 rounded-full shadow-md"></div>
                     </div>
                 </div>
             </div>
 
             <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center space-y-3 shadow-sm">
-                <div class="w-10 h-10 bg-slate-55 rounded-xl flex items-center justify-center mx-auto border border-slate-200 shadow-glow-accent">
+                <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center mx-auto border border-slate-200 shadow-glow-accent">
                     <i data-lucide="shield" class="w-5 h-5 text-brand-accent animate-pulse"></i>
                 </div>
                 <h4 class="text-sm font-bold text-slate-800">Local Data Storage</h4>
@@ -175,7 +204,7 @@
         </main>
 
         <!-- Dynamic Feedback Toast -->
-        <div id="toast" class="absolute bottom-20 left-1/2 -translate-x-1/2 bg-white/95 border border-slate-200 text-slate-805 text-xs py-2.5 px-4 rounded-xl opacity-0 pointer-events-none transition-all duration-300 shadow-glow-accent flex items-center gap-2 z-[100] whitespace-nowrap">
+        <div id="toast" class="absolute bottom-20 left-1/2 -translate-x-1/2 bg-white/95 border border-slate-200 text-slate-800 text-xs py-2.5 px-4 rounded-xl opacity-0 pointer-events-none transition-all duration-300 shadow-glow-accent flex items-center gap-2 z-[100] whitespace-nowrap">
             <i data-lucide="info" class="w-4 h-4 text-brand-accent"></i>
             <span id="toast-message">Logged!</span>
         </div>
@@ -186,7 +215,7 @@
                 <i data-lucide="users" class="w-5 h-5"></i>
                 <span class="text-[10px] font-bold">People</span>
             </button>
-            <button onclick="switchTab('settings')" id="nav-settings" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-all">
+            <button onclick="switchTab('settings')" id="nav-settings" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-650 transition-all">
                 <i data-lucide="settings" class="w-5 h-5"></i>
                 <span class="text-[10px] font-bold">Settings</span>
             </button>
@@ -194,168 +223,144 @@
 
         <!-- LOG & PLAN UNIFIED CONNECTION MODAL (iOS bottom-sheet feel) -->
         <div id="log-modal" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-end z-50 transition-opacity duration-300">
-            <div class="bg-white w-full max-h-[92%] rounded-t-[32px] border-t border-slate-200 p-6 space-y-4 overflow-y-auto transform translate-y-full transition-transform duration-300 shadow-2xl">
+            <div class="bg-white w-full max-h-[94%] rounded-t-[32px] border-t border-slate-200 p-5 space-y-3 overflow-y-auto transform translate-y-full transition-transform duration-300 shadow-2xl flex flex-col">
                 
                 <!-- iOS Sheet Drag Handle -->
-                <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto -mt-2 mb-2 shrink-0"></div>
+                <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto -mt-2 mb-1 shrink-0"></div>
 
-                <div class="flex justify-between items-center">
-                    <h3 id="log-modal-title" class="text-base font-bold text-slate-800">Log Tether</h3>
-                    <button onclick="closeModal('log-modal')" class="text-slate-400 hover:text-white bg-slate-100 p-1.5 rounded-full border border-slate-200">
-                        <i data-lucide="x" class="w-4 h-4"></i>
+                <div class="flex justify-between items-center shrink-0">
+                    <h3 id="log-modal-title" class="text-sm font-bold text-slate-800">Log Tether</h3>
+                    <button onclick="closeModal('log-modal')" class="text-slate-400 hover:text-white bg-slate-100 p-1 rounded-full border border-slate-200">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
                     </button>
                 </div>
 
-                <!-- Past Interaction / Future Plan Tab Selector -->
-                <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200/80">
-                    <button onclick="toggleLogMode('past')" id="btn-log-mode-past" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-slate-800 shadow-sm">
-                        Past Catch-up
-                    </button>
-                    <button onclick="toggleLogMode('future')" id="btn-log-mode-future" class="flex-1 py-2 text-xs font-semibold rounded-lg transition-all text-brand-muted hover:text-slate-850">
-                        Future Plan
-                    </button>
-                </div>
-
-                <!-- PAST CATCH-UP OPTION PANEL -->
-                <div id="past-fields-panel" class="space-y-4">
-                    <!-- Date & Date Range Selectors for Past Catch-up -->
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">When did this happen?</label>
-                        <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200/80 max-w-xs">
-                            <button type="button" onclick="toggleLogDateRange(false)" id="btn-log-single" class="flex-1 py-1 px-2.5 text-[10px] font-bold rounded-lg bg-brand-accent text-white transition-all">Single Day</button>
-                            <button type="button" onclick="toggleLogDateRange(true)" id="btn-log-range" class="flex-1 py-1 px-2.5 text-[10px] font-medium rounded-lg text-brand-muted hover:text-slate-800 transition-all">Date Range</button>
-                        </div>
-                        
-                        <div id="log-single-date-wrapper" class="pt-1">
-                            <button type="button" onclick="triggerCalendarOpen('logDate')" class="w-full bg-slate-5 border border-slate-200 hover:border-slate-300 rounded-xl py-3 px-4 text-xs text-left text-slate-800 flex justify-between items-center transition-all shadow-sm">
-                                <span id="label-log-date" class="font-bold text-slate-700">May 28, 2026</span>
-                                <i data-lucide="calendar" class="w-4 h-4 text-brand-accent"></i>
-                            </button>
+                <!-- UNIFIED INTERACTION FORM -->
+                <div id="unified-log-fields" class="space-y-3 flex-1 overflow-y-auto pr-1">
+                    
+                    <!-- Unified Date Selector -->
+                    <div class="space-y-1 shrink-0">
+                        <label id="unified-date-label" class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">When did this happen?</label>
+                        <div class="flex gap-2 items-center">
+                            <div class="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200/80 w-44">
+                                <button type="button" onclick="toggleLogDateRange(false)" id="btn-log-single" class="flex-1 py-1 px-1.5 text-[9px] font-bold rounded-md bg-brand-accent text-white transition-all">Single</button>
+                                <button type="button" onclick="toggleLogDateRange(true)" id="btn-log-range" class="flex-1 py-1 px-1.5 text-[9px] font-medium rounded-md text-brand-muted hover:text-slate-800 transition-all bg-transparent">Range</button>
+                            </div>
+                            
+                            <div id="log-single-date-wrapper" class="flex-1">
+                                <button type="button" onclick="triggerCalendarOpen('logDate')" class="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-lg py-1.5 px-3 text-xs text-left text-slate-800 flex justify-between items-center transition-all shadow-sm">
+                                    <span id="label-log-date" class="font-bold text-slate-700">May 28, 2026</span>
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-accent"></i>
+                                </button>
+                            </div>
                         </div>
                         
                         <div id="log-range-date-wrapper" class="hidden pt-1 flex gap-2">
                             <div class="flex-1 space-y-1">
-                                <span class="text-[9px] text-slate-500 font-semibold block">START DATE</span>
-                                <button type="button" onclick="triggerCalendarOpen('logStartDate')" class="w-full bg-slate-5 border border-slate-200 hover:border-slate-300 rounded-xl py-3 px-3 text-xs text-left text-slate-800 flex justify-between items-center transition-all shadow-sm">
+                                <span class="text-[8px] text-slate-400 font-semibold block">START DATE</span>
+                                <button type="button" onclick="triggerCalendarOpen('logStartDate')" class="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-lg py-1.5 px-2.5 text-xs text-left text-slate-800 flex justify-between items-center transition-all shadow-sm">
                                     <span id="label-log-start-date" class="font-bold text-slate-700 truncate">May 28, 2026</span>
-                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-accent shrink-0"></i>
+                                    <i data-lucide="calendar" class="w-3 h-3 text-brand-accent shrink-0"></i>
                                 </button>
                             </div>
                             <div class="flex-1 space-y-1">
                                 <span class="text-[9px] text-slate-500 font-semibold block">END DATE</span>
-                                <button type="button" onclick="triggerCalendarOpen('logEndDate')" class="w-full bg-slate-5 border border-slate-200 hover:border-slate-300 rounded-xl py-3 px-3 text-xs text-left text-slate-800 flex justify-between items-center transition-all shadow-sm">
+                                <button type="button" onclick="triggerCalendarOpen('logEndDate')" class="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-lg py-1.5 px-2.5 text-xs text-left text-slate-800 flex justify-between items-center transition-all shadow-sm">
                                     <span id="label-log-end-date" class="font-bold text-slate-700 truncate">May 28, 2026</span>
-                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-accent shrink-0"></i>
+                                    <i data-lucide="calendar" class="w-3 h-3 text-brand-accent shrink-0"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Channel Differentiator -->
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">How did you connect?</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button onclick="selectLogOption('channel', 'Text')" id="btn-chan-Text" class="channel-opt bg-slate-50 border border-slate-200 py-3 rounded-xl flex items-center justify-center gap-2 transition-all text-slate-700">
-                                <i data-lucide="message-square" class="w-4 h-4 text-slate-600"></i>
-                                <span class="text-xs font-semibold">Text Msg</span>
-                            </button>
-                            <button onclick="selectLogOption('channel', 'Call')" id="btn-chan-Call" class="channel-opt bg-slate-50 border border-slate-200 py-3 rounded-xl flex items-center justify-center gap-2 transition-all text-slate-700">
-                                <i data-lucide="phone" class="w-4 h-4 text-slate-600"></i>
-                                <span class="text-xs font-semibold">Voice Call</span>
-                            </button>
-                            <button onclick="selectLogOption('channel', 'Video Call')" id="btn-chan-Video-Call" class="channel-opt bg-slate-50 border border-slate-200 py-3 rounded-xl flex items-center justify-center gap-2 transition-all text-slate-700">
-                                <i data-lucide="video" class="w-4 h-4 text-slate-600"></i>
-                                <span class="text-xs font-semibold">Video Call</span>
-                            </button>
-                            <button onclick="selectLogOption('channel', 'Voice Note')" id="btn-chan-Voice-Note" class="channel-opt bg-slate-50 border border-slate-200 py-3 rounded-xl flex items-center justify-center gap-2 transition-all text-slate-700">
-                                <i data-lucide="mic" class="w-4 h-4 text-slate-600"></i>
-                                <span class="text-xs font-semibold">Voice Note</span>
-                            </button>
-                            <!-- col-span-2 button is kept centered and spans full width -->
-                            <button onclick="selectLogOption('channel', 'In Person')" id="btn-chan-In-Person" class="channel-opt bg-slate-50 border border-slate-200 py-3 rounded-xl flex items-center justify-center gap-2 col-span-2 transition-all text-slate-755">
-                                <i data-lucide="coffee" class="w-4 h-4 text-slate-700"></i>
-                                <span class="text-xs font-semibold">In Person</span>
-                            </button>
+                    <!-- Dynamic FUTURE AREA (Activity Name) -->
+                    <div id="dynamic-future-area" class="space-y-1 hidden">
+                        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">What are you planning?</label>
+                        <input type="text" id="plan-activity" placeholder="e.g. Catch-up Dinner, Coffee Date" class="w-full bg-slate-50 border border-slate-200 focus:border-brand-accent rounded-lg py-2 px-3 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all shadow-sm">
+                    </div>
+
+                    <!-- Dynamic PAST AREA (Channel & Depth) -->
+                    <div id="dynamic-past-area" class="space-y-3">
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">How did you connect?</label>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <button onclick="selectLogOption('channel', 'Text')" id="btn-chan-Text" class="channel-opt bg-slate-50 border border-slate-200 py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all text-slate-700">
+                                    <i data-lucide="message-square" class="w-3.5 h-3.5 text-slate-600"></i>
+                                    <span class="text-[11px] font-semibold">Text Msg</span>
+                                </button>
+                                <button onclick="selectLogOption('channel', 'Call')" id="btn-chan-Call" class="channel-opt bg-slate-50 border border-slate-200 py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all text-slate-700">
+                                    <i data-lucide="phone" class="w-3.5 h-3.5 text-slate-600"></i>
+                                    <span class="text-[11px] font-semibold">Voice Call</span>
+                                </button>
+                                <button onclick="selectLogOption('channel', 'Video Call')" id="btn-chan-Video-Call" class="channel-opt bg-slate-50 border border-slate-200 py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all text-slate-700">
+                                    <i data-lucide="video" class="w-3.5 h-3.5 text-slate-600"></i>
+                                    <span class="text-[11px] font-semibold">Video Call</span>
+                                </button>
+                                <button onclick="selectLogOption('channel', 'Voice Note')" id="btn-chan-Voice-Note" class="channel-opt bg-slate-50 border border-slate-200 py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all text-slate-700">
+                                    <i data-lucide="mic" class="w-3.5 h-3.5 text-slate-600"></i>
+                                    <span class="text-[11px] font-semibold">Voice Note</span>
+                                </button>
+                                <!-- col-span-2 button is kept centered and spans full width -->
+                                <button onclick="selectLogOption('channel', 'In Person')" id="btn-chan-In-Person" class="channel-opt bg-slate-50 border border-slate-200 py-2 rounded-lg flex items-center justify-center gap-1.5 col-span-2 transition-all text-slate-700">
+                                    <i data-lucide="coffee" class="w-3.5 h-3.5 text-slate-700"></i>
+                                    <span class="text-[11px] font-semibold">In Person</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">How deep was the conversation?</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="selectLogOption('depth', 'quick')" id="btn-depth-quick" class="depth-opt bg-slate-50 border border-slate-200 p-2 rounded-lg flex items-center justify-center gap-1.5 transition-all text-slate-700 shadow-sm">
+                                    <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-500"></i>
+                                    <div class="text-left leading-tight">
+                                        <span class="text-[11px] font-extrabold block text-slate-800">Quick Hi</span>
+                                        <span class="text-[8px] text-slate-400 block font-medium">Halves timer</span>
+                                    </div>
+                                </button>
+                                <button onclick="selectLogOption('depth', 'meaningful')" id="btn-depth-meaningful" class="depth-opt bg-slate-50 border border-slate-200 p-2 rounded-lg flex items-center justify-center gap-1.5 transition-all text-slate-700 shadow-sm">
+                                    <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-500"></i>
+                                    <div class="text-left leading-tight">
+                                        <span class="text-[11px] font-extrabold block text-slate-800">Good Catch Up</span>
+                                        <span class="text-[8px] text-slate-400 block font-medium">Fully resets clock</span>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Depth Differentiator -->
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">How deep was the conversation?</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="selectLogOption('depth', 'quick')" id="btn-depth-quick" class="depth-opt bg-slate-50 border border-slate-200 p-2.5 rounded-xl flex items-center justify-center gap-2 transition-all text-slate-700 shadow-sm">
-                                <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
-                                <div class="text-left">
-                                    <span class="text-xs font-extrabold block text-slate-800">Quick Hi</span>
-                                    <span class="text-[9px] text-slate-400 block font-medium">Halves overdue timer</span>
-                                </div>
-                            </button>
-                            <button onclick="selectLogOption('depth', 'meaningful')" id="btn-depth-meaningful" class="depth-opt bg-slate-50 border border-slate-200 p-2.5 rounded-xl flex items-center justify-center gap-2 transition-all text-slate-700 shadow-sm">
-                                <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i>
-                                <div class="text-left">
-                                    <span class="text-xs font-extrabold block text-slate-800">Good Catch Up</span>
-                                    <span class="text-[9px] text-slate-400 block font-medium">Fully resets clock</span>
-                                </div>
-                            </button>
-                        </div>
+                    <!-- Shared Notes Field -->
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Notes / Details (Optional)</label>
+                        <textarea id="shared-log-notes" placeholder="e.g. Discuss road trip details!" class="w-full h-11 bg-slate-50 border border-slate-200 focus:border-brand-accent rounded-lg p-2 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all resize-none shadow-sm"></textarea>
                     </div>
 
-                    <!-- Notes Form Field -->
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-slate-505 uppercase tracking-wider block">Catch-up Notes (Optional)</label>
-                        <textarea id="log-notes" placeholder="Sarah just started a new job! Got coffee at Stumptown." class="w-full h-16 bg-slate-50 border border-slate-200 focus:border-brand-accent rounded-xl p-3 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all resize-none shadow-sm"></textarea>
+                    <!-- TAG OTHER CONNECTIONS COMPONENT (Sleek Search & Pill Selection) -->
+                    <div id="log-tag-friends-wrapper" class="space-y-1 pt-1.5 border-t border-slate-100 shrink-0 relative mt-2">
+                        <label class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Who else joined? (Tag Connections)</label>
+                        
+                        <!-- Pill Container of Currently Tagged Friends -->
+                        <div id="log-tagged-pills-container" class="flex flex-wrap gap-1.5 py-0.5 empty:hidden max-h-12 overflow-y-auto no-scrollbar">
+                            <!-- Tagged friend pills will go here -->
+                        </div>
+                        
+                        <!-- Search & Input Field -->
+                        <div class="relative flex items-center">
+                            <i data-lucide="user-plus" class="absolute left-2.5 w-3.5 h-3.5 text-slate-400"></i>
+                            <input type="text" id="tag-search-input" onfocus="showTagSuggestions()" oninput="handleTagSearchInput(this.value)" placeholder="Search friends to tag..." class="w-full bg-slate-50 border border-slate-200 focus:border-brand-accent rounded-lg py-1.5 pl-8 pr-8 text-[11px] text-slate-800 placeholder-slate-400 outline-none transition-all">
+                            <button type="button" onclick="clearTagSearch()" id="clear-tag-search-btn" class="absolute right-2.5 hidden text-slate-400 hover:text-slate-600">
+                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Floating Suggestions Dropdown -->
+                        <div id="tag-suggestions-dropdown" class="absolute left-0 right-0 bottom-full mb-1 max-h-36 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg hidden z-[120] divide-y divide-slate-100">
+                            <!-- Dynamic suggestions -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- FUTURE PLAN OPTION PANEL -->
-                <div id="future-fields-panel" class="space-y-4 hidden">
-                    <!-- Plan Activity Name -->
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-slate-505 uppercase tracking-wider block">What are you planning?</label>
-                        <input type="text" id="plan-activity" placeholder="e.g. Catch-up Dinner, Coffee Date, Quick Call" class="w-full bg-slate-50 border border-slate-200 focus:border-brand-accent rounded-xl py-3 px-4 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all shadow-sm">
-                    </div>
-
-                    <!-- Plan Date / Date Range Pickers -->
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-slate-505 uppercase tracking-wider block">When is it scheduled?</label>
-                        <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200/80 max-w-xs">
-                            <button type="button" onclick="togglePlanDateRange(false)" id="btn-plan-single" class="flex-1 py-1 px-2.5 text-[10px] font-bold rounded-lg bg-brand-accent text-white transition-all">Single Day</button>
-                            <button type="button" onclick="togglePlanDateRange(true)" id="btn-plan-range" class="flex-1 py-1 px-2.5 text-[10px] font-medium rounded-lg text-brand-muted hover:text-slate-800 transition-all bg-transparent">Date Range</button>
-                        </div>
-                        
-                        <div id="plan-single-date-wrapper" class="pt-1">
-                            <button type="button" onclick="triggerCalendarOpen('planDate')" class="w-full bg-slate-5 border border-slate-200 hover:border-slate-300 rounded-xl py-3 px-4 text-xs text-left text-slate-800 flex justify-between items-center transition-all shadow-sm">
-                                <span id="label-plan-date" class="font-bold text-slate-700">May 28, 2026</span>
-                                <i data-lucide="calendar" class="w-4 h-4 text-brand-accent"></i>
-                            </button>
-                        </div>
-                        
-                        <div id="plan-range-date-wrapper" class="hidden pt-1 flex gap-2">
-                            <div class="flex-1 space-y-1">
-                                <span class="text-[9px] text-slate-550 font-semibold block">START DATE</span>
-                                <button type="button" onclick="triggerCalendarOpen('planStartDate')" class="w-full bg-slate-5 border border-slate-200 hover:border-slate-300 rounded-xl py-3 px-3 text-xs text-left text-slate-800 flex justify-between items-center transition-all shadow-sm">
-                                    <span id="label-plan-start-date" class="font-bold text-slate-700 truncate">May 28, 2026</span>
-                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-accent shrink-0"></i>
-                                </button>
-                            </div>
-                            <div class="flex-1 space-y-1">
-                                <span class="text-[9px] text-slate-550 font-semibold block">END DATE</span>
-                                <button type="button" onclick="triggerCalendarOpen('planEndDate')" class="w-full bg-[#030712] border border-slate-800 hover:border-slate-700 rounded-xl py-3 px-3 text-xs text-left text-slate-800 flex justify-between items-center transition-all shadow-sm">
-                                    <span id="label-plan-end-date" class="font-bold text-slate-700 truncate">May 28, 2026</span>
-                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-accent shrink-0"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Future Plan Notes -->
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-slate-505 uppercase tracking-wider block">Notes / Details (Optional)</label>
-                        <textarea id="plan-notes" placeholder="e.g. Meet at Lou's Pizza at 7:00 PM. Discuss road trip details!" class="w-full h-16 bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl p-3 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all resize-none shadow-sm"></textarea>
-                    </div>
-                </div>
-
-                <button onclick="submitConnectionLog()" class="w-full bg-brand-accent hover:bg-brand-accentHover text-white py-4 rounded-xl font-extrabold transition-all shadow-glow-accent active:scale-95 text-xs">
+                <button id="btn-save-log" onclick="submitConnectionLog()" class="w-full bg-brand-accent hover:bg-brand-accentHover text-white py-3 mt-1 rounded-xl font-extrabold transition-all shadow-glow-accent active:scale-95 text-xs shrink-0">
                     Save Action
                 </button>
             </div>
@@ -369,7 +374,7 @@
 
                 <div class="flex justify-between items-center">
                     <h3 class="text-base font-bold text-slate-800">Add to Tether</h3>
-                    <button onclick="closeModal('add-modal')" class="text-slate-400 hover:text-slate-650 bg-slate-100 p-1.5 rounded-full border border-slate-200 animate-fade">
+                    <button onclick="closeModal('add-modal')" class="text-slate-400 hover:text-slate-655 bg-slate-100 p-1.5 rounded-full border border-slate-200 animate-fade">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -377,13 +382,13 @@
                 <!-- Input Name -->
                 <div class="space-y-1">
                     <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Name</label>
-                    <input type="text" id="add-name" placeholder="Sarah Jenkins" class="w-full bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-3 px-4 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all">
+                    <input type="text" id="add-name" placeholder="Sarah Jenkins" class="w-full bg-slate-50 border border-slate-200 focus:border-brand-accent rounded-xl py-3 px-4 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all">
                 </div>
 
                 <!-- Optional Location Field -->
                 <div class="space-y-1">
-                    <label class="text-[10px] font-bold text-slate-550 uppercase tracking-wider block">Location / City <span class="text-[9px] text-slate-400 font-normal">(Optional)</span></label>
-                    <input type="text" id="add-location" placeholder="Chicago, IL" class="w-full bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-3 px-4 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all">
+                    <label class="text-[10px] font-bold text-slate-505 uppercase tracking-wider block">Location / City <span class="text-[9px] text-slate-400 font-normal">(Optional)</span></label>
+                    <input type="text" id="add-location" placeholder="Chicago, IL" class="w-full bg-slate-50 border border-slate-200 focus:border-brand-accent rounded-xl py-3 px-4 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all">
                 </div>
 
                 <!-- Cadence selection -->
@@ -393,7 +398,7 @@
                         <input type="number" id="add-cadence-number" value="3" min="1" max="365" class="w-1/3 bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-3 text-center text-xs text-slate-850 outline-none font-bold transition-all">
                         
                         <div class="relative flex-1">
-                            <select id="add-add-cadence-unit" class="w-full bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-3 px-4 text-xs text-slate-850 appearance-none outline-none font-medium transition-all cursor-pointer">
+                            <select id="add-add-cadence-unit" class="w-full bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-3 px-4 text-xs text-slate-855 appearance-none outline-none font-medium transition-all cursor-pointer">
                                 <option value="days">Days</option>
                                 <option value="weeks" selected>Weeks</option>
                                 <option value="months">Months</option>
@@ -405,7 +410,7 @@
                     </div>
                 </div>
 
-                <button onclick="submitAddFriend()" class="w-full bg-gradient-to-r from-orange-500 to-brand-accent hover:from-brand-accent hover:to-brand-accentHover text-white py-4 rounded-xl font-extrabold transition-all shadow-glow-accent active:scale-95 text-xs">
+                <button onclick="submitAddFriend()" class="w-full bg-brand-accent hover:bg-brand-accentHover text-white py-4 rounded-xl font-extrabold transition-all shadow-glow-accent active:scale-95 text-xs">
                     Create Tether
                 </button>
             </div>
@@ -421,19 +426,20 @@
                 <div class="flex justify-between items-start shrink-0">
                     <div class="space-y-1">
                         <div class="flex items-center gap-2">
-                            <h3 id="detail-name" class="text-xl font-extrabold text-slate-850">Marcus Thompson</h3>
-                            <span id="detail-status-badge" class="text-[9px] px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wider bg-brand-green/20 text-brand-green border border-brand-green/30">Tethered</span>
+                            <h3 id="detail-name" class="text-xl font-extrabold text-slate-800">Marcus Thompson</h3>
+                            <span id="detail-status-badge" class="text-[9px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-brand-green/20 text-brand-green border border-brand-green/30">Tethered</span>
                         </div>
-                        <div class="flex items-center gap-1.5 text-xs text-slate-505">
+                        <div class="flex items-center gap-1.5 text-xs text-slate-500">
                             <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-500"></i>
                             <span id="detail-location-text" class="font-medium">Chicago, IL</span>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="toggleEditMode()" class="text-slate-400 hover:text-slate-650 bg-slate-100 p-2.5 rounded-full border border-slate-200">
-                            <i id="edit-icon" data-lucide="edit-3" class="w-4 h-4"></i>
+                        <button onclick="toggleEditMode()" class="text-slate-400 hover:text-slate-600 bg-slate-100 p-2.5 rounded-full border border-slate-200 flex items-center justify-center">
+                            <span id="icon-mode-view"><i data-lucide="pencil" class="w-4 h-4"></i></span>
+                            <span id="icon-mode-edit" class="hidden"><i data-lucide="arrow-left" class="w-4 h-4"></i></span>
                         </button>
-                        <button onclick="closeModal('detail-modal')" class="text-slate-400 hover:text-slate-650 bg-slate-100 p-2.5 rounded-full border border-slate-200">
+                        <button onclick="closeModal('detail-modal')" class="text-slate-400 hover:text-slate-600 bg-slate-100 p-2.5 rounded-full border border-slate-200">
                             <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -447,15 +453,15 @@
                     </div>
 
                     <!-- UPCOMING PLANS INTEGRATED COMPONENT -->
-                    <div class="space-y-2 shrink-0">
-                        <span class="text-[10px] font-bold text-slate-505 uppercase tracking-wider block">Upcoming Plan</span>
+                    <div id="upcoming-plans-container" class="space-y-2 shrink-0 hidden">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Upcoming Plan</span>
                         
                         <!-- If plan exists -->
                         <div id="detail-upcoming-card" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3 hidden shadow-sm">
                             <div class="flex justify-between items-start">
                                 <div class="flex items-center gap-1.5">
                                     <i data-lucide="calendar" class="w-4 h-4 text-brand-accent animate-pulse"></i>
-                                    <span class="text-xs font-bold text-slate-850">Plan Scheduled</span>
+                                    <span class="text-xs font-bold text-slate-800">Plan Scheduled</span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <!-- Edit Plan Button -->
@@ -466,7 +472,7 @@
                                 </div>
                             </div>
                             <div class="space-y-1">
-                                <h5 id="detail-upcoming-event" class="text-xs font-bold text-slate-850">Catch-up Dinner</h5>
+                                <h5 id="detail-upcoming-event" class="text-xs font-bold text-slate-800">Catch-up Dinner</h5>
                                 <p id="detail-upcoming-date" class="text-[11px] text-brand-accent font-semibold">Thursday, Jun 4</p>
                                 <p id="detail-upcoming-notes" class="text-[11px] text-slate-505 italic leading-relaxed">"Lou's Pizza at 7 PM"</p>
                             </div>
@@ -475,32 +481,24 @@
                                 <i data-lucide="check" class="w-4 h-4"></i> Complete / Log
                             </button>
                         </div>
-
-                        <!-- If no plan exists -->
-                        <div id="detail-no-upcoming" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-center">
-                            <p class="text-[11px] text-brand-muted mb-2">No upcoming plan scheduled yet.</p>
-                            <button onclick="scheduleUpcomingFromProfile()" class="inline-flex items-center gap-1.5 text-xs text-brand-accent hover:text-brand-accentHover font-bold transition-all">
-                                <i data-lucide="calendar-plus" class="w-4 h-4"></i> Schedule Future Plan
-                            </button>
-                        </div>
                     </div>
 
                     <!-- FILTERABLE TIMELINE CHIPS COMPONENT -->
                     <div class="space-y-1.5 shrink-0">
-                        <span class="text-[10px] font-bold text-slate-505 uppercase tracking-wider block">Filter History By</span>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Filter History By</span>
                         <div class="flex gap-1.5 overflow-x-auto pb-1.5 no-scrollbar text-[11px]">
                             <button onclick="filterHistory('All')" id="btn-hist-All" class="hist-filter-btn px-3 py-1 rounded-full font-bold bg-brand-accent text-white shrink-0 transition-all">All</button>
-                            <button onclick="filterHistory('Text')" id="btn-hist-Text" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-505 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Text Msg</button>
-                            <button onclick="filterHistory('Call')" id="btn-hist-Call" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-550 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Voice Call</button>
-                            <button onclick="filterHistory('Video Call')" id="btn-hist-Video-Call" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-550 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Video</button>
-                            <button onclick="filterHistory('Voice Note')" id="btn-hist-Voice-Note" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-550 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Voice Note</button>
-                            <button onclick="filterHistory('In Person')" id="btn-hist-In-Person" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-550 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">In Person</button>
+                            <button onclick="filterHistory('Text')" id="btn-hist-Text" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-500 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Text Msg</button>
+                            <button onclick="filterHistory('Call')" id="btn-hist-Call" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-500 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Voice Call</button>
+                            <button onclick="filterHistory('Video Call')" id="btn-hist-Video-Call" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-500 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Video</button>
+                            <button onclick="filterHistory('Voice Note')" id="btn-hist-Voice-Note" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-500 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">Voice Note</button>
+                            <button onclick="filterHistory('In Person')" id="btn-hist-In-Person" class="hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-500 border border-slate-200 hover:text-slate-800 shrink-0 transition-all">In Person</button>
                         </div>
                     </div>
 
                     <!-- Connection History Log (Scrollable Timeline) -->
                     <div class="flex-1 flex flex-col min-h-0 space-y-2">
-                        <span class="text-[10px] font-bold text-slate-550 uppercase tracking-wider block">Interaction History</span>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Interaction History</span>
                         
                         <div class="flex-1 overflow-y-auto pr-1">
                             <div id="detail-history-timeline" class="relative pl-5 border-l border-slate-200 space-y-4 ml-2 pb-6">
@@ -509,9 +507,12 @@
                         </div>
                     </div>
 
-                    <!-- Log Catch-Up Directly from Detail view -->
-                    <div class="pt-2 shrink-0">
-                        <button onclick="closeModal('detail-modal'); setTimeout(() => triggerLogMenu(activeDetailId, document.getElementById('detail-name').innerText, 'past'), 350)" class="w-full bg-brand-accent hover:bg-brand-accentHover text-white py-3 rounded-xl font-extrabold transition-all text-xs flex items-center justify-center gap-2 shadow-glow-accent">
+                    <!-- Adaptive Log & Schedule Actions (Dynamically Adjusts layout based on plan presence) -->
+                    <div class="pt-2 shrink-0 flex gap-2">
+                        <button id="detail-schedule-btn" onclick="scheduleUpcomingFromProfile()" class="flex-1 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 py-3 rounded-xl font-bold transition-all text-xs flex items-center justify-center gap-2">
+                            <i data-lucide="calendar-plus" class="w-4 h-4"></i> Schedule Plan
+                        </button>
+                        <button id="detail-log-btn" onclick="closeModal('detail-modal'); setTimeout(() => triggerLogMenu(activeDetailId, document.getElementById('detail-name').innerText), 350)" class="flex-1 bg-brand-accent hover:bg-brand-accentHover text-white py-3 rounded-xl font-extrabold transition-all text-xs flex items-center justify-center gap-2 shadow-glow-accent">
                             <i data-lucide="check-circle" class="w-4 h-4"></i> Log Connection
                         </button>
                     </div>
@@ -519,24 +520,24 @@
 
                 <!-- Editable Form Section -->
                 <div id="profile-edit-section" class="hidden flex-1 flex flex-col min-h-0 space-y-4">
-                    <span class="text-[10px] font-bold text-slate-555 uppercase tracking-wider block">Modify Friend Settings</span>
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Modify Friend Settings</span>
                     
                     <div class="space-y-3 flex-1 overflow-y-auto pr-1">
                         <!-- Edit Name -->
                         <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-slate-555 uppercase tracking-wider block">Full Name</label>
-                            <input type="text" id="edit-name-field" class="w-full bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-2.5 px-4 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Full Name</label>
+                            <input type="text" id="edit-name-field" class="w-full bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-2.5 px-4 text-xs text-slate-805 placeholder-slate-400 outline-none transition-all">
                         </div>
 
                         <!-- Edit Location -->
                         <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-slate-550 uppercase tracking-wider block">Location (Optional)</label>
-                            <input type="text" id="edit-location-field" class="w-full bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-2.5 px-4 text-xs text-slate-800 placeholder-slate-400 outline-none transition-all">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Location (Optional)</label>
+                            <input type="text" id="edit-location-field" class="w-full bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-2.5 px-4 text-xs text-slate-805 placeholder-slate-400 outline-none transition-all">
                         </div>
 
                         <!-- Edit Cadence Selection -->
                         <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-slate-555 uppercase tracking-wider block">Set Keep-in-Touch Cadence</label>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Set Keep-in-Touch Cadence</label>
                             <div class="flex gap-2">
                                 <input type="number" id="edit-cadence-number" min="1" max="365" class="w-1/3 bg-slate-5 border border-slate-200 focus:border-brand-accent rounded-xl py-2.5 text-center text-xs text-slate-800 outline-none font-bold transition-all">
                                 <div class="relative flex-1">
@@ -575,27 +576,27 @@
 
                 <div class="flex justify-between items-center">
                     <div>
-                        <h3 class="text-base font-bold text-slate-800">Select Date</h3>
+                        <h3 class="text-base font-bold text-slate-805">Select Date</h3>
                         <p id="calendar-subtitle" class="text-[10px] text-brand-muted uppercase tracking-wider font-semibold">Tether Calendar</p>
                     </div>
-                    <button onclick="closeModal('calendar-modal')" class="text-slate-400 hover:text-slate-650 bg-slate-100 p-1.5 rounded-full border border-slate-200">
+                    <button onclick="closeModal('calendar-modal')" class="text-slate-400 hover:text-white bg-slate-100 p-1.5 rounded-full border border-slate-200">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
 
                 <!-- Calendar Navigation Header -->
                 <div class="flex justify-between items-center bg-slate-100 p-2 rounded-xl border border-slate-200">
-                    <button onclick="navigateCalendarMonth(-1)" class="text-slate-400 hover:text-slate-650 p-1.5 bg-white rounded-lg border border-slate-200">
+                    <button onclick="navigateCalendarMonth(-1)" class="text-slate-400 hover:text-slate-655 bg-white rounded-lg border border-slate-200">
                         <i data-lucide="chevron-left" class="w-4 h-4"></i>
                     </button>
                     <span id="calendar-month-year" class="text-xs font-bold text-slate-800 uppercase tracking-wider">May 2026</span>
-                    <button onclick="navigateCalendarMonth(1)" class="text-slate-400 hover:text-slate-650 p-1.5 bg-white rounded-lg border border-slate-200">
+                    <button onclick="navigateCalendarMonth(1)" class="text-slate-400 hover:text-slate-655 bg-white rounded-lg border border-slate-200">
                         <i data-lucide="chevron-right" class="w-4 h-4"></i>
                     </button>
                 </div>
 
                 <!-- Days-of-the-Week Header Grid -->
-                <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-500 uppercase py-1">
+                <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-505 uppercase py-1">
                     <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
                 </div>
 
@@ -611,6 +612,27 @@
                     </button>
                     <button onclick="confirmCalendarSelection()" class="flex-1 bg-brand-accent hover:bg-brand-accentHover text-white py-3 rounded-xl font-bold transition-all text-xs shadow-md">
                         Select Date
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CUSTOM CONFIRM MODAL (Tactile minimalist design) -->
+        <div id="confirm-modal" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center z-[120] p-6 transition-opacity duration-300">
+            <div class="bg-white w-full max-w-xs rounded-[32px] border border-slate-200 p-6 space-y-4 shadow-2xl text-center transform scale-95 transition-transform duration-300">
+                <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center mx-auto border border-red-100">
+                    <i data-lucide="alert-triangle" class="w-5.5 h-5.5 text-brand-red"></i>
+                </div>
+                <div class="space-y-1.5">
+                    <h4 id="confirm-modal-title" class="text-sm font-extrabold text-slate-800">Are you sure?</h4>
+                    <p id="confirm-modal-description" class="text-xs text-brand-muted leading-relaxed">This action cannot be undone.</p>
+                </div>
+                <div class="flex gap-2.5 pt-1">
+                    <button onclick="closeModal('confirm-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-xl font-bold transition-all text-xs">
+                        Cancel
+                    </button>
+                    <button id="confirm-modal-action-btn" class="flex-1 bg-brand-red hover:bg-red-800 text-white py-3 rounded-xl font-extrabold transition-all text-xs shadow-sm">
+                        Confirm
                     </button>
                 </div>
             </div>
@@ -668,7 +690,7 @@
                 lastType: "meaningful",
                 upcoming: { event: "Mother's Day Getaway", date: "2026-05-30", endDate: "2026-06-01", notes: "Spending weekend together in Banff!" },
                 history: [
-                    { date: "2026-05-11", endDate: "2026-05-13", channel: "In Person", depth: "meaningful", notes: "Visited Calgary. Spent 3 days over the weekend shopping and visiting national parks together." }
+                    { date: "2026-05-11", endDate: "2026-05-13", channel: "In Person", depth: "meaningful", notes: "Added to Tether connection portal." }
                 ]
             },
             { 
@@ -691,55 +713,83 @@
         // Robust Local Storage Initialization Hook
         let contacts = JSON.parse(localStorage.getItem('tether_contacts')) || DEFAULT_CONTACTS;
 
+        // Global thresholds configured by Settings panel
+        let globalSettings = JSON.parse(localStorage.getItem('tether_global_settings')) || {
+            driftThresholdPct: 80,
+            fadeThresholdPct: 150
+        };
+
         let activeLogId = null;
         let activeDetailId = null;
         let isEditMode = false;
-        let isConsumingUpcoming = false; // Flag to track if logging is triggered by completing a scheduled plan
+        
+        let activeLogActionContext = 'new'; // 'new', 'edit-history', 'edit-plan'
+        let isConsumingUpcoming = false;
         
         let activeChannel = 'Text';
         let activeDepth = 'quick';
-        let activeLogMode = 'past'; // 'past' or 'future'
+        let activeEditHistoryIndex = null;
+        let taggedFriendIds = [];
         
         let logIsRange = false;
-        let planIsRange = false;
         let activeHistoryFilter = 'All';
-        
         let searchQuery = '';
-        let activeStatusFilter = null; // 'green', 'yellow', or 'red'
-        let hideScheduled = false; // Flag to filter out contacts with upcoming scheduled plans
+        let activeStatusFilter = null;
+        let hideScheduled = false;
 
-        // Calendar selection state
+        let activeDeleteHistoryContactId = null;
+        let activeDeleteHistoryIndex = null;
+
+        // Unified Calendar selection state
         let logDate = TODAY_STR;
         let logStartDate = TODAY_STR;
         let logEndDate = TODAY_STR;
-        let planDate = TODAY_STR;
-        let planStartDate = TODAY_STR;
-        let planEndDate = TODAY_STR;
 
         let calendarYear = 2026;
         let calendarMonth = 4; // May (0-indexed)
-        let calendarActiveField = null; // e.g. 'logDate', 'logStartDate', 'logEndDate', etc.
-        let calendarTempSelected = ""; // 'YYYY-MM-DD'
+        let calendarActiveField = null; 
+        let calendarTempSelected = ""; 
 
-        // Save contacts helper called during structural updates to preserve changes offline on device
         function saveContacts() {
             localStorage.setItem('tether_contacts', JSON.stringify(contacts));
         }
 
-        // Safe helper to trigger Lucide icons when the library is fully loaded in the document
+        function initSettingsUI() {
+            const driftSlider = document.getElementById('input-drift-threshold');
+            if (driftSlider) driftSlider.value = globalSettings.driftThresholdPct;
+            const driftLabel = document.getElementById('label-drift-threshold');
+            if (driftLabel) driftLabel.innerText = globalSettings.driftThresholdPct + "% of interval";
+            
+            const fadeSlider = document.getElementById('input-fade-threshold');
+            if (fadeSlider) fadeSlider.value = globalSettings.fadeThresholdPct;
+            const fadeLabel = document.getElementById('label-fade-threshold');
+            if (fadeLabel) fadeLabel.innerText = globalSettings.fadeThresholdPct + "% of interval";
+        }
+
+        function updateGlobalSettingsFromUI() {
+            const drift = parseInt(document.getElementById('input-drift-threshold').value);
+            const fade = parseInt(document.getElementById('input-fade-threshold').value);
+            
+            globalSettings.driftThresholdPct = drift;
+            globalSettings.fadeThresholdPct = fade;
+            
+            document.getElementById('label-drift-threshold').innerText = drift + "% of interval";
+            document.getElementById('label-fade-threshold').innerText = fade + "% of interval";
+            
+            localStorage.setItem('tether_global_settings', JSON.stringify(globalSettings));
+            renderDashboard();
+        }
+
         function createIconsSafe() {
             if (typeof lucide !== 'undefined') {
                 try {
                     lucide.createIcons();
-                } catch (e) {
-                    console.error("Lucide icon generation error:", e);
-                }
+                } catch (e) {}
             } else {
                 setTimeout(createIconsSafe, 50);
             }
         }
 
-        // Calculate dynamic days elapsed since the given calendar date string
         function calculateDaysSince(dateStr) {
             if (!dateStr) return 999;
             const today = new Date(TODAY_STR);
@@ -749,7 +799,6 @@
             return Math.max(0, diffDays);
         }
 
-        // Custom Date Formatting helper for simple date layout (e.g., May 28, 2026)
         function formatFriendlyDate(dateStr) {
             if (!dateStr) return '';
             const parts = dateStr.split('-');
@@ -758,7 +807,6 @@
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
 
-        // Custom formatted range layout (e.g., Jun 4 - 6, 2026 or Jun 28 - Jul 2, 2026)
         function formatRangeFriendly(startStr, endStr) {
             if (!startStr) return '';
             if (!endStr) return formatFriendlyDate(startStr);
@@ -778,16 +826,12 @@
             const eDay = eDate.getDate();
             const eYear = eDate.getFullYear();
             
-            if (sYear !== eYear) {
-                return `${sMonth} ${sDay}, ${sYear} - ${eMonth} ${eDay}, ${eYear}`;
-            }
-            if (sMonth !== eMonth) {
-                return `${sMonth} ${sDay} - ${eMonth} ${eDay}, ${sYear}`;
-            }
+            if (sYear !== eYear) return `${sMonth} ${sDay}, ${sYear} - ${eMonth} ${eDay}, ${eYear}`;
+            if (sMonth !== eMonth) return `${sMonth} ${sDay} - ${eMonth} ${eDay}, ${sYear}`;
             return `${sMonth} ${sDay} - ${eDay}, ${sYear}`;
         }
 
-        // Custom Modal Management
+        // Restored missing openModal function
         function openModal(id) {
             const modal = document.getElementById(id);
             if (!modal) return;
@@ -797,17 +841,24 @@
                 const content = modal.querySelector('.bg-white, .bg-brand-card, [class*="translate-y-full"]');
                 if (content) {
                     content.classList.remove('translate-y-full');
+                    content.classList.remove('scale-95');
+                    content.classList.add('scale-100');
                 }
             }, 10);
         }
 
-        // Close Modal
+        // Restored missing closeModal function
         function closeModal(id) {
             const modal = document.getElementById(id);
             if (!modal) return;
             const content = modal.querySelector('.bg-white, .bg-brand-card, [class*="translate-y-full"]');
             if (content) {
-                content.classList.add('translate-y-full');
+                if (id === 'confirm-modal') {
+                    content.classList.add('scale-95');
+                    content.classList.remove('scale-100');
+                } else {
+                    content.classList.add('translate-y-full');
+                }
             }
             setTimeout(() => {
                 modal.classList.remove('flex');
@@ -815,154 +866,182 @@
             }, 300);
         }
 
-        // Handle text filtering input
-        function handleSearch(value) {
-            searchQuery = value.trim();
-            const clearBtn = document.getElementById('clear-search-btn');
-            if (searchQuery) {
-                clearBtn.classList.remove('hidden');
+        function triggerCalendarOpen(fieldKey) {
+            calendarActiveField = fieldKey;
+            
+            let initialVal = "";
+            if (fieldKey === 'logDate') initialVal = logDate;
+            if (fieldKey === 'logStartDate') initialVal = logStartDate;
+            if (fieldKey === 'logEndDate') initialVal = logEndDate;
+            
+            calendarTempSelected = initialVal;
+            
+            if (initialVal) {
+                const parts = initialVal.split('-');
+                if (parts.length === 3) {
+                    calendarYear = parseInt(parts[0]);
+                    calendarMonth = parseInt(parts[1]) - 1;
+                }
             } else {
-                clearBtn.classList.add('hidden');
+                calendarYear = 2026;
+                calendarMonth = 4;
             }
-            renderDashboard();
+            
+            const fieldLabels = {
+                logDate: 'Select Single Day',
+                logStartDate: 'Select Start Day',
+                logEndDate: 'Select End Day'
+            };
+            document.getElementById('calendar-subtitle').innerText = fieldLabels[fieldKey] || 'Select Date';
+            
+            renderCalendarUI();
+            openModal('calendar-modal');
         }
 
-        // Clear active search query
-        function clearSearch() {
-            const searchInput = document.getElementById('search-input');
-            searchInput.value = '';
-            searchQuery = '';
-            document.getElementById('clear-search-btn').classList.add('hidden');
-            renderDashboard();
+        function generateCalendarDays(year, month) {
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+            const prevLastDate = new Date(year, month, 0).getDate();
+            
+            const days = [];
+            
+            for (let i = firstDayIndex; i > 0; i--) {
+                const d = prevLastDate - i + 1;
+                const prevMonth = month === 0 ? 11 : month - 1;
+                const prevYear = month === 0 ? year - 1 : year;
+                days.push({ day: d, currentMonth: false, dateStr: `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}` });
+            }
+            
+            for (let i = 1; i <= lastDate; i++) {
+                days.push({ day: i, currentMonth: true, dateStr: `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}` });
+            }
+            
+            const totalSlots = 42;
+            const remainingSlots = totalSlots - days.length;
+            for (let i = 1; i <= remainingSlots; i++) {
+                const nextMonth = month === 11 ? 0 : month + 1;
+                const nextYear = month === 11 ? year + 1 : year;
+                days.push({ day: i, currentMonth: false, dateStr: `${nextYear}-${String(nextMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}` });
+            }
+            
+            return days;
         }
 
-        // Toggle green/yellow/red status metric filter
-        function toggleStatusFilter(status) {
-            if (activeStatusFilter === status) {
-                activeStatusFilter = null;
-                showToast("Cleared status filter.");
-            } else {
-                activeStatusFilter = status;
-                const statusLabels = { green: 'Tethered', yellow: 'Drifting', red: 'Fading' };
-                showToast(`Filtering by: ${statusLabels[status]}`);
-            }
-            renderDashboard();
-        }
+        function renderCalendarUI() {
+            const titleDate = new Date(calendarYear, calendarMonth, 1);
+            const monthLabel = titleDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            document.getElementById('calendar-month-year').innerText = monthLabel.toUpperCase();
 
-        // Toggle Past log modal between Single Day and Date Range
-        function toggleLogDateRange(isRange) {
-            logIsRange = isRange;
-            const btnSingle = document.getElementById('btn-log-single');
-            const btnRange = document.getElementById('btn-log-range');
-            const singleWrapper = document.getElementById('log-single-date-wrapper');
-            const rangeWrapper = document.getElementById('log-range-date-wrapper');
-
-            if (isRange) {
-                btnRange.className = "flex-1 py-1 px-2.5 text-[10px] font-bold rounded-lg bg-brand-accent text-white transition-all";
-                btnSingle.className = "flex-1 py-1 px-2.5 text-[10px] font-medium rounded-lg text-brand-muted hover:text-slate-800 transition-all bg-transparent";
-                singleWrapper.classList.add('hidden');
-                rangeWrapper.classList.remove('hidden');
-            } else {
-                btnSingle.className = "flex-1 py-1 px-2.5 text-[10px] font-bold rounded-lg bg-brand-accent text-white transition-all";
-                btnRange.className = "flex-1 py-1 px-2.5 text-[10px] font-medium rounded-lg text-brand-muted hover:text-slate-800 transition-all bg-transparent";
-                singleWrapper.classList.remove('hidden');
-                rangeWrapper.classList.add('hidden');
-            }
-        }
-
-        // Toggle Future plan modal between Single Day and Date Range
-        function togglePlanDateRange(isRange) {
-            planIsRange = isRange;
-            const btnSingle = document.getElementById('btn-plan-single');
-            const btnRange = document.getElementById('btn-plan-range');
-            const singleWrapper = document.getElementById('plan-single-date-wrapper');
-            const rangeWrapper = document.getElementById('plan-range-date-wrapper');
-
-            if (isRange) {
-                btnRange.className = "flex-1 py-1 px-2.5 text-[10px] font-bold rounded-lg bg-brand-accent text-white transition-all";
-                btnSingle.className = "flex-1 py-1 px-2.5 text-[10px] font-medium rounded-lg text-brand-muted hover:text-slate-850 transition-all bg-transparent";
-                singleWrapper.classList.add('hidden');
-                rangeWrapper.classList.remove('hidden');
-            } else {
-                btnSingle.className = "flex-1 py-1 px-2.5 text-[10px] font-bold rounded-lg bg-brand-accent text-white transition-all";
-                btnRange.className = "flex-1 py-1 px-2.5 text-[10px] font-medium rounded-lg text-brand-muted hover:text-slate-850 transition-all bg-transparent";
-                singleWrapper.classList.remove('hidden');
-                rangeWrapper.classList.add('hidden');
-            }
-        }
-
-        // Toggle unified Log Connection modal between Past Catch-up and Future Plan
-        function toggleLogMode(mode) {
-            activeLogMode = mode;
-            const btnPast = document.getElementById('btn-log-mode-past');
-            const btnFuture = document.getElementById('btn-log-mode-future');
-            const pastPanel = document.getElementById('past-fields-panel');
-            const futurePanel = document.getElementById('future-fields-panel');
-
-            if (mode === 'past') {
-                btnPast.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-slate-850 shadow-sm transition-all";
-                btnFuture.className = "flex-1 py-2 text-xs font-semibold rounded-lg text-brand-muted hover:text-slate-800 transition-all";
-                pastPanel.classList.remove('hidden');
-                futurePanel.classList.add('hidden');
-            } else {
-                btnFuture.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-slate-850 shadow-sm transition-all";
-                btnPast.className = "flex-1 py-2 text-xs font-semibold rounded-lg text-brand-muted hover:text-slate-800 transition-all";
-                pastPanel.classList.add('hidden');
-                futurePanel.classList.remove('hidden');
-            }
+            const days = generateCalendarDays(calendarYear, calendarMonth);
+            const grid = document.getElementById('calendar-days-grid');
+            grid.innerHTML = '';
+            
+            days.forEach(d => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.innerText = d.day;
+                
+                let classes = "h-9 w-9 mx-auto rounded-xl flex items-center justify-center transition-all focus:outline-none font-bold ";
+                
+                if (!d.currentMonth) {
+                    classes += "text-slate-300 ";
+                } else {
+                    classes += "text-slate-800 hover:bg-slate-100 ";
+                }
+                
+                if (d.dateStr === calendarTempSelected) {
+                    classes = "h-9 w-9 mx-auto rounded-xl flex items-center justify-center transition-all focus:outline-none font-bold bg-brand-accent text-white hover:bg-brand-accent ";
+                } else if (d.dateStr === TODAY_STR) {
+                    classes += "ring-2 ring-brand-accent/50 ";
+                }
+                
+                btn.className = classes;
+                btn.onclick = () => {
+                    calendarTempSelected = d.dateStr;
+                    renderCalendarUI();
+                };
+                grid.appendChild(btn);
+            });
             createIconsSafe();
         }
 
-        // Toggle scheduled plans filter
-        function toggleHideScheduled() {
-            hideScheduled = !hideScheduled;
-            const btn = document.getElementById('btn-hide-scheduled');
-            const icon = btn.querySelector('i');
+        function navigateCalendarMonth(direction) {
+            calendarMonth += direction;
+            if (calendarMonth < 0) {
+                calendarMonth = 11;
+                calendarYear--;
+            } else if (calendarMonth > 11) {
+                calendarMonth = 0;
+                calendarYear++;
+            }
+            renderCalendarUI();
+        }
+
+        function confirmCalendarSelection() {
+            if (!calendarTempSelected) {
+                showToast("Please pick a date first.");
+                return;
+            }
             
-            if (hideScheduled) {
-                btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-brand-accent bg-brand-accent text-white text-[11px] font-bold transition-all shadow-sm";
-                if (icon) {
-                    icon.className = "w-3.5 h-3.5 text-white";
-                }
-                showToast("Hiding connections with upcoming plans");
+            if (calendarActiveField === 'logDate') {
+                logDate = calendarTempSelected;
+                document.getElementById('label-log-date').innerText = formatFriendlyDate(logDate);
+            } else if (calendarActiveField === 'logStartDate') {
+                logStartDate = calendarTempSelected;
+                document.getElementById('label-log-start-date').innerText = formatFriendlyDate(logStartDate);
+            } else if (calendarActiveField === 'logEndDate') {
+                logEndDate = calendarTempSelected;
+                document.getElementById('label-log-end-date').innerText = formatFriendlyDate(logEndDate);
+            }
+            
+            closeModal('calendar-modal');
+            showToast("Date set!");
+            
+            // Re-evaluate form state intelligently based on the newly selected date
+            checkFutureState();
+        }
+
+        // INTELLIGENT UI MORPHING: Determines if log is past/future based purely on date selection
+        function checkFutureState() {
+            let compareDate = logIsRange ? logStartDate : logDate;
+            let isFuture = compareDate > TODAY_STR;
+            
+            const pastArea = document.getElementById('dynamic-past-area');
+            const futureArea = document.getElementById('dynamic-future-area');
+            const dateLabel = document.getElementById('unified-date-label');
+            const saveBtn = document.getElementById('btn-save-log');
+            
+            if (isFuture) {
+                if (pastArea) pastArea.classList.add('hidden');
+                if (futureArea) futureArea.classList.remove('hidden');
+                if (dateLabel) dateLabel.innerText = "When is it scheduled?";
+                if (saveBtn) saveBtn.innerText = "Schedule Plan";
             } else {
-                btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[11px] font-semibold text-slate-600 transition-all shadow-sm";
-                if (icon) {
-                    icon.className = "w-3.5 h-3.5 text-slate-400";
-                }
-                showToast("Showing all connections");
-            }
-            renderDashboard();
-        }
-
-        // Trigger Log/Plan menu from Profile details directly
-        function scheduleUpcomingFromProfile() {
-            closeModal('detail-modal');
-            const contact = contacts.find(c => c.id === activeDetailId);
-            if (contact) {
-                setTimeout(() => {
-                    triggerLogMenu(contact.id, contact.name, 'future');
-                }, 350);
+                if (pastArea) pastArea.classList.remove('hidden');
+                if (futureArea) futureArea.classList.add('hidden');
+                if (dateLabel) dateLabel.innerText = "When did this happen?";
+                if (saveBtn) saveBtn.innerText = "Save Action";
             }
         }
 
-        // Filter the details history tab dynamically
         function filterHistory(channel) {
             activeHistoryFilter = channel;
             document.querySelectorAll('.hist-filter-btn').forEach(btn => {
-                btn.className = "hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-505 border border-slate-200 hover:text-slate-800 shrink-0 transition-all";
+                btn.className = "hist-filter-btn px-3 py-1 rounded-full font-semibold bg-slate-50 text-slate-500 border border-slate-200 hover:text-slate-800 shrink-0 transition-all";
             });
-            document.getElementById(`btn-hist-${channel.replace(/\s+/g, '-')}`).className = "hist-filter-btn px-3 py-1 rounded-full font-bold bg-brand-accent text-white shrink-0 transition-all";
-            
+            const filterBtn = document.getElementById(`btn-hist-${channel.replace(/\s+/g, '-')}`);
+            if (filterBtn) {
+                filterBtn.className = "hist-filter-btn px-3 py-1 rounded-full font-bold bg-brand-accent text-white shrink-0 transition-all";
+            }
             renderHistoryTimeline();
         }
 
-        // Render the filtered timeline list
         function renderHistoryTimeline() {
             const contact = contacts.find(c => c.id === activeDetailId);
             if (!contact) return;
 
             const timeline = document.getElementById('detail-history-timeline');
+            if (!timeline) return;
             timeline.innerHTML = '';
 
             let historyList = contact.history || [];
@@ -983,7 +1062,7 @@
                 const timelineItem = document.createElement('div');
                 timelineItem.className = "relative mb-5 last:mb-1";
 
-                let iconClass = "text-slate-805 bg-slate-100 border border-slate-200";
+                let iconClass = "text-slate-800 bg-slate-100 border border-slate-200";
                 let iconName = "message-square";
                 if (item.channel === "Call") {
                     iconClass = "text-sky-600 bg-sky-50 border border-sky-100";
@@ -999,19 +1078,32 @@
                     iconName = "mic";
                 }
 
-                const depthBadgeColor = item.depth === 'meaningful' ? 'text-slate-850 border-slate-200 bg-slate-100' : 'text-slate-600 border-slate-150 bg-slate-50';
+                const depthBadgeColor = item.depth === 'meaningful' ? 'text-slate-800 border-slate-200 bg-slate-100' : 'text-slate-600 border-slate-150 bg-slate-50';
                 const depthText = item.depth === 'meaningful' ? 'Good Catch Up' : 'Quick Hi';
                 
                 const dateLabel = item.endDate ? formatRangeFriendly(item.date, item.endDate) : formatFriendlyDate(item.date);
+                const absoluteHistoryIdx = contact.history.indexOf(item);
 
                 timelineItem.innerHTML = `
                     <span class="absolute -left-[28px] top-1 flex items-center justify-center w-5 h-5 rounded-full ring-4 ring-[#faf8f5] ${iconClass}">
                         <i data-lucide="${iconName}" class="w-3 h-3"></i>
                     </span>
-                    <div class="bg-slate-50/80 border border-slate-150 rounded-2xl p-4 space-y-1.5 ml-1 shadow-sm">
+                    <div class="bg-slate-50/80 border border-slate-150 rounded-2xl p-4 space-y-1.5 ml-1 shadow-sm relative">
                         <div class="flex justify-between items-center">
                             <span class="text-xs font-bold text-slate-800">${item.channel}</span>
-                            <span class="text-[9px] text-slate-550 font-medium">${dateLabel}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[9px] text-slate-500 font-medium">${dateLabel}</span>
+                                
+                                <!-- Sleek inline controls -->
+                                <div class="flex items-center gap-1.5 ml-1">
+                                    <button onclick="editHistoryItem(${contact.id}, ${absoluteHistoryIdx})" class="text-slate-400 hover:text-brand-accent p-1 transition-colors" title="Edit Log">
+                                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                    <button onclick="confirmDeleteHistoryItem(${contact.id}, ${absoluteHistoryIdx})" class="text-slate-400 hover:text-red-600 p-1 transition-colors" title="Delete Log">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <span class="text-[9px] border px-1.5 py-0.2 rounded font-medium ${depthBadgeColor}">${depthText}</span>
@@ -1024,7 +1116,6 @@
             createIconsSafe();
         }
 
-        // Open specific user's detailed profile view
         function openDetailView(id) {
             activeDetailId = id;
             isEditMode = false;
@@ -1032,8 +1123,10 @@
             document.getElementById('profile-view-section').classList.remove('hidden');
             document.getElementById('profile-edit-section').classList.add('hidden');
             
-            const editIcon = document.getElementById('edit-icon');
-            editIcon.setAttribute('data-lucide', 'edit-3');
+            const iconView = document.getElementById('icon-mode-view');
+            const iconEdit = document.getElementById('icon-mode-edit');
+            if (iconView) iconView.classList.remove('hidden');
+            if (iconEdit) iconEdit.classList.add('hidden');
 
             const contact = contacts.find(c => c.id === id);
             if (!contact) return;
@@ -1041,135 +1134,376 @@
             document.getElementById('detail-name').innerText = contact.name;
             
             let statusText = "Tethered";
-            let badgeClass = "bg-brand-green/20 text-brand-green border border-brand-green/30";
+            let badgeClass = "bg-brand-green/20 text-brand-green border-brand-green/30";
             
-            if (contact.daysSince >= contact.cadence * 1.5) {
+            const driftLimit = contact.cadence * (globalSettings.driftThresholdPct / 100);
+            const fadeLimit = contact.cadence * (globalSettings.fadeThresholdPct / 100);
+
+            if (contact.daysSince >= fadeLimit) {
                 statusText = "Fading";
-                badgeClass = "bg-brand-red/20 text-brand-red border border-brand-red/30";
-            } else if (contact.daysSince >= contact.cadence) {
+                badgeClass = "bg-brand-red/20 text-brand-red border-brand-red/30";
+            } else if (contact.daysSince >= driftLimit) {
                 statusText = "Drifting";
-                badgeClass = "bg-brand-yellow/20 text-brand-yellow border border-brand-yellow/30";
+                badgeClass = "bg-brand-yellow/20 text-brand-yellow border-brand-yellow/30";
             }
             
             const badge = document.getElementById('detail-status-badge');
-            badge.innerText = statusText;
-            badge.className = `text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${badgeClass}`;
+            if (badge) {
+                badge.innerText = statusText;
+                badge.className = `text-[9px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${badgeClass}`;
+            }
 
             const locText = document.getElementById('detail-location-text');
-            locText.innerText = contact.location || "No location saved";
+            if (locText) {
+                locText.innerText = contact.location || "No location saved";
+            }
 
             const readableGoal = `Every ${contact.unitValue} ${contact.unitValue === 1 ? contact.unit.slice(0, -1) : contact.unit}`;
-            document.getElementById('detail-cadence-label').innerText = readableGoal;
+            const cadenceLabel = document.getElementById('detail-cadence-label');
+            if (cadenceLabel) {
+                cadenceLabel.innerText = readableGoal;
+            }
 
             const planCard = document.getElementById('detail-upcoming-card');
-            const noPlanCard = document.getElementById('detail-no-upcoming');
+            const planContainer = document.getElementById('upcoming-plans-container');
+            const scheduleBtn = document.getElementById('detail-schedule-btn');
+            const logBtn = document.getElementById('detail-log-btn');
 
             if (contact.upcoming) {
-                document.getElementById('detail-upcoming-event').innerText = contact.upcoming.event;
+                const upcomingEvent = document.getElementById('detail-upcoming-event');
+                if (upcomingEvent) upcomingEvent.innerText = contact.upcoming.event;
                 
                 const upcomingPlanDate = contact.upcoming.endDate ? 
                     formatRangeFriendly(contact.upcoming.date, contact.upcoming.endDate) : 
                     formatFriendlyDate(contact.upcoming.date);
                 
-                document.getElementById('detail-upcoming-date').innerText = upcomingPlanDate;
-                document.getElementById('detail-upcoming-notes').innerText = contact.upcoming.notes ? `"${contact.upcoming.notes}"` : 'No added details';
+                const upcomingDateEl = document.getElementById('detail-upcoming-date');
+                if (upcomingDateEl) upcomingDateEl.innerText = upcomingPlanDate;
                 
-                planCard.classList.remove('hidden');
-                noPlanCard.classList.add('hidden');
+                const upcomingNotesEl = document.getElementById('detail-upcoming-notes');
+                if (upcomingNotesEl) upcomingNotesEl.innerText = contact.upcoming.notes ? `"${contact.upcoming.notes}"` : 'No added details';
+                
+                if (planCard) planCard.classList.remove('hidden');
+                if (planContainer) planContainer.classList.remove('hidden');
+                
+                if (scheduleBtn) scheduleBtn.classList.add('hidden');
+                if (logBtn) {
+                    logBtn.classList.remove('flex-1');
+                    logBtn.classList.add('w-full');
+                }
             } else {
-                planCard.classList.add('hidden');
-                noPlanCard.classList.remove('hidden');
+                if (planCard) planCard.classList.add('hidden');
+                if (planContainer) planContainer.classList.add('hidden');
+                
+                if (scheduleBtn) scheduleBtn.classList.remove('hidden');
+                if (logBtn) {
+                    logBtn.classList.remove('w-full');
+                    logBtn.classList.add('flex-1');
+                }
             }
 
-            document.getElementById('edit-name-field').value = contact.name;
-            document.getElementById('edit-location-field').value = contact.location || "";
-            document.getElementById('edit-cadence-number').value = contact.unitValue;
-            document.getElementById('edit-cadence-unit').value = contact.unit;
+            const editNameField = document.getElementById('edit-name-field');
+            if (editNameField) editNameField.value = contact.name;
+            const editLocationField = document.getElementById('edit-location-field');
+            if (editLocationField) editLocationField.value = contact.location || "";
+            const editCadenceNumber = document.getElementById('edit-cadence-number');
+            if (editCadenceNumber) editCadenceNumber.value = contact.unitValue;
+            const editCadenceUnit = document.getElementById('edit-cadence-unit');
+            if (editCadenceUnit) editCadenceUnit.value = contact.unit;
 
             filterHistory('All');
             openModal('detail-modal');
         }
 
-        // Cancel upcoming plans
+        // Unified Edit Router
+        function editHistoryItem(contactId, historyIndex) {
+            closeModal('detail-modal');
+            const contact = contacts.find(c => c.id === contactId);
+            if (!contact) return;
+            
+            activeLogId = contactId;
+            activeEditHistoryIndex = historyIndex;
+            activeLogActionContext = 'edit-history';
+            
+            const item = contact.history[historyIndex];
+            
+            document.getElementById('log-modal-title').innerText = `Edit Log with ${contact.name}`;
+            
+            // Hide Tag Wrapper during past edits
+            const tagWrapper = document.getElementById('log-tag-friends-wrapper');
+            if (tagWrapper) tagWrapper.classList.add('hidden');
+            
+            if (item.endDate) {
+                toggleLogDateRange(true);
+                logStartDate = item.date;
+                logEndDate = item.endDate;
+                document.getElementById('label-log-start-date').innerText = formatFriendlyDate(logStartDate);
+                document.getElementById('label-log-end-date').innerText = formatFriendlyDate(logEndDate);
+            } else {
+                toggleLogDateRange(false);
+                logDate = item.date;
+                document.getElementById('label-log-date').innerText = formatFriendlyDate(logDate);
+            }
+            
+            selectLogOption('channel', item.channel);
+            selectLogOption('depth', item.depth);
+            document.getElementById('shared-log-notes').value = item.notes || "";
+            
+            checkFutureState();
+            openModal('log-modal');
+        }
+
+        function confirmDeleteHistoryItem(contactId, historyIndex) {
+            closeModal('detail-modal');
+            activeDeleteHistoryContactId = contactId;
+            activeDeleteHistoryIndex = historyIndex;
+            
+            const contact = contacts.find(c => c.id === contactId);
+            const item = contact.history[historyIndex];
+            
+            document.getElementById('confirm-modal-title').innerText = "Delete Past Log?";
+            document.getElementById('confirm-modal-description').innerText = `Are you sure you want to permanently delete the ${item.channel} interaction logged on ${formatFriendlyDate(item.date)}?`;
+            
+            document.getElementById('confirm-modal-action-btn').onclick = executeDeleteHistoryItem;
+            openModal('confirm-modal');
+        }
+
+        function executeDeleteHistoryItem() {
+            const contact = contacts.find(c => c.id === activeDeleteHistoryContactId);
+            if (contact) {
+                contact.history.splice(activeDeleteHistoryIndex, 1);
+                showToast("Connection entry deleted.");
+                saveContacts();
+                renderDashboard();
+                closeModal('confirm-modal');
+                setTimeout(() => openDetailView(contact.id), 350);
+            }
+        }
+
+        function toggleFriendTagState(friendId, element) {
+            const index = taggedFriendIds.indexOf(friendId);
+            const dot = document.getElementById(`tag-dot-${friendId}`);
+            
+            if (index === -1) {
+                taggedFriendIds.push(friendId);
+                element.className = "flex items-center gap-1.5 px-3 py-1 rounded-full border border-brand-green/30 bg-brand-green/10 text-[11px] font-bold text-brand-green transition-all shadow-sm shrink-0";
+                if (dot) dot.className = "w-1.5 h-1.5 rounded-full bg-brand-green transition-all";
+            } else {
+                taggedFriendIds.splice(index, 1);
+                element.className = "flex items-center gap-1.5 px-3 py-1 rounded-full border border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600 transition-all hover:bg-slate-100 shadow-sm shrink-0";
+                if (dot) dot.className = "w-1.5 h-1.5 rounded-full bg-slate-300 transition-all";
+            }
+        }
+
+        function removeFriendTag(friendId) {
+            taggedFriendIds = taggedFriendIds.filter(id => id !== friendId);
+            renderTaggedPills();
+            const dropdown = document.getElementById('tag-suggestions-dropdown');
+            if (dropdown && !dropdown.classList.contains('hidden')) {
+                const searchVal = document.getElementById('tag-search-input').value;
+                renderTagSuggestions(searchVal);
+            }
+        }
+
+        function renderTaggedPills() {
+            const container = document.getElementById('log-tagged-pills-container');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            if (taggedFriendIds.length === 0) return;
+            
+            taggedFriendIds.forEach(id => {
+                const c = contacts.find(item => item.id === id);
+                if (c) {
+                    const pill = document.createElement('span');
+                    pill.className = "inline-flex items-center gap-1 bg-brand-green/15 text-brand-green border border-brand-green/30 px-2.5 py-1 rounded-xl text-[11px] font-bold shadow-sm shrink-0";
+                    pill.innerHTML = `
+                        <span>${c.name}</span>
+                        <button type="button" onclick="removeFriendTag(${c.id})" class="hover:text-brand-red ml-0.5 transition-colors focus:outline-none flex items-center justify-center">
+                            <i data-lucide="x" class="w-3 h-3"></i>
+                        </button>
+                    `;
+                    container.appendChild(pill);
+                }
+            });
+            createIconsSafe();
+        }
+
+        function renderTagSuggestions(filterText = "") {
+            const dropdown = document.getElementById('tag-suggestions-dropdown');
+            if (!dropdown) return;
+            dropdown.innerHTML = '';
+
+            const lowerFilter = filterText.toLowerCase();
+            const others = contacts.filter(c => c.id !== activeLogId && !taggedFriendIds.includes(c.id));
+            const matches = others.filter(c => c.name.toLowerCase().includes(lowerFilter));
+            
+            if (matches.length === 0) {
+                dropdown.innerHTML = `<div class="p-3 text-xs text-brand-muted italic">No matching connections found</div>`;
+                return;
+            }
+            
+            matches.forEach(c => {
+                const item = document.createElement('div');
+                item.className = "p-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors flex items-center justify-between";
+                item.innerHTML = `
+                    <span>${c.name}</span>
+                    <i data-lucide="plus" class="w-3.5 h-3.5 text-slate-400"></i>
+                `;
+                item.onclick = (e) => {
+                    e.stopPropagation();
+                    selectTagSuggestion(c.id);
+                };
+                dropdown.appendChild(item);
+            });
+            createIconsSafe();
+        }
+
+        function showTagSuggestions() {
+            const dropdown = document.getElementById('tag-suggestions-dropdown');
+            if (dropdown) {
+                dropdown.classList.remove('hidden');
+                const searchVal = document.getElementById('tag-search-input').value;
+                renderTagSuggestions(searchVal);
+            }
+        }
+
+        function handleTagSearchInput(value) {
+            const clearBtn = document.getElementById('clear-tag-search-btn');
+            if (value.trim()) {
+                if (clearBtn) clearBtn.classList.remove('hidden');
+            } else {
+                if (clearBtn) clearBtn.classList.add('hidden');
+            }
+            renderTagSuggestions(value);
+        }
+
+        function clearTagSearch() {
+            const input = document.getElementById('tag-search-input');
+            if (input) input.value = '';
+            const clearBtn = document.getElementById('clear-tag-search-btn');
+            if (clearBtn) clearBtn.classList.add('hidden');
+            renderTagSuggestions('');
+        }
+
+        function selectTagSuggestion(friendId) {
+            if (!taggedFriendIds.includes(friendId)) {
+                taggedFriendIds.push(friendId);
+            }
+            clearTagSearch();
+            renderTaggedPills();
+            const dropdown = document.getElementById('tag-suggestions-dropdown');
+            if (dropdown) dropdown.classList.add('hidden');
+        }
+
         function cancelUpcomingPlan() {
             const contact = contacts.find(c => c.id === activeDetailId);
             if (contact) {
                 const oldPlanName = contact.upcoming.event;
                 contact.upcoming = null;
-                showToast(`Deleted plan: "${oldPlanName}" with ${contact.name}`);
+                showToast(`Deleted plan: "${oldPlanName}"`);
                 closeModal('detail-modal');
-                saveContacts(); // Preserved offline
+                saveContacts();
                 renderDashboard();
             }
         }
 
-        // Edit existing upcoming plans
+        // Integrated Edit Route for Upcoming Plans
         function editUpcomingPlan() {
             const contact = contacts.find(c => c.id === activeDetailId);
             if (contact && contact.upcoming) {
                 closeModal('detail-modal');
                 setTimeout(() => {
-                    triggerLogMenu(contact.id, contact.name, 'future');
+                    activeLogId = contact.id;
+                    activeEditHistoryIndex = null;
+                    activeLogActionContext = 'edit-plan';
                     
-                    document.getElementById('plan-activity').value = contact.upcoming.event;
-                    document.getElementById('plan-notes').value = contact.upcoming.notes || '';
+                    document.getElementById('log-modal-title').innerText = `Edit Plan with ${contact.name}`;
                     
-                    if (contact.upcoming.endDate) {
-                        togglePlanDateRange(true);
-                        planStartDate = contact.upcoming.date;
-                        planEndDate = contact.upcoming.endDate;
-                        document.getElementById('label-plan-start-date').innerText = formatFriendlyDate(planStartDate);
-                        document.getElementById('label-plan-end-date').innerText = formatFriendlyDate(planEndDate);
-                    } else {
-                        togglePlanDateRange(false);
-                        planDate = contact.upcoming.date;
-                        document.getElementById('label-plan-date').innerText = formatFriendlyDate(planDate);
-                    }
-                }, 350);
-            }
-        }
-
-        // Fill past catch-up log immediately with scheduled plan's parameters
-        function completeUpcomingPlan() {
-            const contact = contacts.find(c => c.id === activeDetailId);
-            if (contact) {
-                closeModal('detail-modal');
-                setTimeout(() => {
-                    triggerLogMenu(contact.id, contact.name, 'past', true);
+                    const tagWrapper = document.getElementById('log-tag-friends-wrapper');
+                    if (tagWrapper) tagWrapper.classList.add('hidden');
                     
-                    if (contact.upcoming.endDate) {
+                    const plan = contact.upcoming;
+                    document.getElementById('plan-activity').value = plan.event;
+                    document.getElementById('shared-log-notes').value = plan.notes || '';
+                    
+                    if (plan.endDate) {
                         toggleLogDateRange(true);
-                        logStartDate = contact.upcoming.date;
-                        logEndDate = contact.upcoming.endDate;
+                        logStartDate = plan.date;
+                        logEndDate = plan.endDate;
                         document.getElementById('label-log-start-date').innerText = formatFriendlyDate(logStartDate);
                         document.getElementById('label-log-end-date').innerText = formatFriendlyDate(logEndDate);
                     } else {
                         toggleLogDateRange(false);
-                        logDate = contact.upcoming.date;
+                        logDate = plan.date;
                         document.getElementById('label-log-date').innerText = formatFriendlyDate(logDate);
                     }
-
-                    document.getElementById('log-notes').value = `Completed Plan: ${contact.upcoming.event}. ${contact.upcoming.notes || ''}`;
+                    
+                    checkFutureState();
+                    openModal('log-modal');
                 }, 350);
             }
         }
 
-        // Toggle Edit Mode inside the Connection Detail modal
+        function completeUpcomingPlan() {
+            const contact = contacts.find(c => c.id === activeDetailId);
+            if (contact && contact.upcoming) {
+                const plan = contact.upcoming;
+                let channel = "In Person";
+                const lowerEvent = plan.event.toLowerCase();
+                
+                if (lowerEvent.includes("video") || lowerEvent.includes("facetime") || lowerEvent.includes("zoom") || lowerEvent.includes("skype") || lowerEvent.includes("teams")) channel = "Video Call";
+                else if (lowerEvent.includes("voice note") || lowerEvent.includes("audio note") || lowerEvent.includes("vn") || lowerEvent.includes("memo") || lowerEvent.includes("audio msg")) channel = "Voice Note";
+                else if (lowerEvent.includes("phone") || lowerEvent.includes("call") || lowerEvent.includes("talk") || lowerEvent.includes("ring")) channel = "Call";
+                else if (lowerEvent.includes("text") || lowerEvent.includes("message") || lowerEvent.includes("msg") || lowerEvent.includes("dm") || lowerEvent.includes("chat")) channel = "Text";
+
+                const sharedContacts = contacts.filter(c => c.upcoming && c.upcoming.date === plan.date && c.upcoming.event === plan.event);
+                
+                sharedContacts.forEach(c => {
+                    const otherParticipants = sharedContacts.filter(item => item.id !== c.id).map(item => item.name);
+                    const inlineParticipantNotes = otherParticipants.length > 0 ? ` (with ${otherParticipants.join(', ')})` : '';
+
+                    if (!c.history) c.history = [];
+                    c.history.unshift({
+                        date: plan.date,
+                        endDate: plan.endDate || null,
+                        channel: channel,
+                        depth: "meaningful",
+                        notes: `Completed Plan: ${plan.event}.${inlineParticipantNotes} ${plan.notes || ''}`
+                    });
+                    c.upcoming = null;
+                });
+
+                closeModal('detail-modal');
+                saveContacts();
+                renderDashboard();
+                
+                if (sharedContacts.length > 1) {
+                    showToast(`Logged group interaction for participants of "${plan.event}"!`);
+                } else {
+                    showToast(`Logged interaction for ${contact.name}!`);
+                }
+            }
+        }
+
         function toggleEditMode() {
             isEditMode = !isEditMode;
             
             const viewSec = document.getElementById('profile-view-section');
             const editSec = document.getElementById('profile-edit-section');
-            const editIcon = document.getElementById('edit-icon');
+            const iconView = document.getElementById('icon-mode-view');
+            const iconEdit = document.getElementById('icon-mode-edit');
 
             if (isEditMode) {
                 viewSec.classList.add('hidden');
                 editSec.classList.remove('hidden');
-                editIcon.setAttribute('data-lucide', 'arrow-left');
+                if (iconView) iconView.classList.add('hidden');
+                if (iconEdit) iconEdit.classList.remove('hidden');
             } else {
                 viewSec.classList.remove('hidden');
                 editSec.classList.add('hidden');
-                editIcon.setAttribute('data-lucide', 'edit-3');
+                if (iconView) iconView.classList.remove('hidden');
+                if (iconEdit) iconEdit.classList.add('hidden');
             }
             createIconsSafe();
         }
@@ -1205,26 +1539,37 @@
 
             showToast(`Saved settings for ${contact.name}!`);
             closeModal('detail-modal');
-            saveContacts(); // Preserved offline
+            saveContacts();
             renderDashboard();
         }
 
-        // Untether (delete) connection
         function deleteConnection() {
+            closeModal('detail-modal');
+            const contact = contacts.find(c => c.id === activeDetailId);
+            if (!contact) return;
+            
+            document.getElementById('confirm-modal-title').innerText = "Untether Friend?";
+            document.getElementById('confirm-modal-description').innerText = `Are you sure you want to completely untether ${contact.name}? This will remove all their interaction history.`;
+            
+            document.getElementById('confirm-modal-action-btn').onclick = executeDeleteContact;
+            openModal('confirm-modal');
+        }
+
+        function executeDeleteContact() {
             const index = contacts.findIndex(c => c.id === activeDetailId);
             if (index !== -1) {
                 const name = contacts[index].name;
                 contacts.splice(index, 1);
                 showToast(`Removed ${name} from Tether.`);
-                closeModal('detail-modal');
-                saveContacts(); // Preserved offline
+                saveContacts();
                 renderDashboard();
+                closeModal('confirm-modal');
             }
         }
 
-        // Manage active log selection states
         function selectLogOption(category, value) {
             if (category === 'channel') {
+                activeChannel = value;
                 document.querySelectorAll('.channel-opt').forEach(btn => {
                     btn.classList.remove('border-brand-accent', 'bg-brand-accent/5', 'ring-1', 'ring-brand-accent/20', 'text-brand-accent', 'font-bold');
                     btn.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-700');
@@ -1237,6 +1582,7 @@
                 }
             }
             if (category === 'depth') {
+                activeDepth = value;
                 document.querySelectorAll('.depth-opt').forEach(btn => {
                     btn.classList.remove('border-brand-accent', 'bg-brand-accent/5', 'ring-1', 'ring-brand-accent/20', 'text-brand-accent', 'font-bold');
                     btn.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-700');
@@ -1249,134 +1595,225 @@
             }
         }
 
-        // Open Log/Plan menu overlay
-        function triggerLogMenu(id, name, defaultMode = 'past', consumingUpcoming = false) {
+        function toggleLogDateRange(isRange) {
+            logIsRange = isRange;
+            const btnSingle = document.getElementById('btn-log-single');
+            const btnRange = document.getElementById('btn-log-range');
+            const singleWrapper = document.getElementById('log-single-date-wrapper');
+            const rangeWrapper = document.getElementById('log-range-date-wrapper');
+
+            if (isRange) {
+                if (btnRange) btnRange.className = "flex-1 py-1 px-1.5 text-[9px] font-bold rounded-md bg-brand-accent text-white transition-all";
+                if (btnSingle) btnSingle.className = "flex-1 py-1 px-1.5 text-[9px] font-medium rounded-md text-brand-muted hover:text-slate-800 transition-all bg-transparent";
+                if (singleWrapper) singleWrapper.classList.add('hidden');
+                if (rangeWrapper) rangeWrapper.classList.remove('hidden');
+            } else {
+                if (btnSingle) btnSingle.className = "flex-1 py-1 px-1.5 text-[9px] font-bold rounded-md bg-brand-accent text-white transition-all";
+                if (btnRange) btnRange.className = "flex-1 py-1 px-1.5 text-[9px] font-medium rounded-md text-brand-muted hover:text-slate-800 transition-all bg-transparent";
+                if (singleWrapper) singleWrapper.classList.remove('hidden');
+                if (rangeWrapper) rangeWrapper.classList.add('hidden');
+            }
+        }
+
+        // Re-engineered Unified Log Entry trigger
+        function triggerLogMenu(id, name, isPreemptivelyFuture = false, consumingUpcoming = false) {
             activeLogId = id;
+            activeEditHistoryIndex = null;
+            activeLogActionContext = 'new';
             isConsumingUpcoming = consumingUpcoming; 
+            
             document.getElementById('log-modal-title').innerText = `Tether Log with ${name}`;
+            
+            const wrapper = document.getElementById('log-tag-friends-wrapper');
+            if (wrapper) wrapper.classList.remove('hidden');
+            
+            const tagInput = document.getElementById('tag-search-input');
+            if (tagInput) tagInput.value = "";
+            const dropdown = document.getElementById('tag-suggestions-dropdown');
+            if (dropdown) dropdown.classList.add('hidden');
+            const clearBtn = document.getElementById('clear-tag-search-btn');
+            if (clearBtn) clearBtn.classList.add('hidden');
+            
+            taggedFriendIds = [];
+            renderTaggedPills();
             
             selectLogOption('channel', 'Text');
             selectLogOption('depth', 'quick');
-            document.getElementById('log-notes').value = ""; 
+            document.getElementById('shared-log-notes').value = ""; 
             document.getElementById('plan-activity').value = "";
-            document.getElementById('plan-notes').value = "";
 
-            // Reset custom date variables to standard anchor day
-            logDate = TODAY_STR;
-            logStartDate = TODAY_STR;
-            logEndDate = TODAY_STR;
-            
-            planDate = TODAY_STR;
-            planStartDate = TODAY_STR;
-            planEndDate = TODAY_STR;
+            if (isPreemptivelyFuture) {
+                // Instantly advance date picker to Tomorrow
+                const d = new Date(TODAY_STR);
+                d.setDate(d.getDate() + 1);
+                const tmrwStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                
+                logDate = tmrwStr;
+                logStartDate = tmrwStr;
+                logEndDate = tmrwStr;
+            } else {
+                logDate = TODAY_STR;
+                logStartDate = TODAY_STR;
+                logEndDate = TODAY_STR;
+            }
 
             document.getElementById('label-log-date').innerText = formatFriendlyDate(logDate);
             document.getElementById('label-log-start-date').innerText = formatFriendlyDate(logStartDate);
             document.getElementById('label-log-end-date').innerText = formatFriendlyDate(logEndDate);
             
-            document.getElementById('label-plan-date').innerText = formatFriendlyDate(planDate);
-            document.getElementById('label-plan-start-date').innerText = formatFriendlyDate(planStartDate);
-            document.getElementById('label-plan-end-date').innerText = formatFriendlyDate(planEndDate);
-
             toggleLogDateRange(false);
-            togglePlanDateRange(false);
-
-            toggleLogMode(defaultMode);
+            
+            // Re-evaluate form layout dynamically
+            checkFutureState();
             openModal('log-modal');
         }
 
-        // Submit log past catch-up OR save future plan scheduled
+        // Unified Submission Handler for New Past Logs, Edited Past Logs, New Plans, Edited Plans
         function submitConnectionLog() {
             const contact = contacts.find(c => c.id === activeLogId);
-            if (contact) {
-                if (activeLogMode === 'future') {
-                    const planActivity = document.getElementById('plan-activity').value.trim() || 'Catch-up';
-                    const planNotes = document.getElementById('plan-notes').value.trim();
-                    let planDateVal = "";
-                    let planEndDateVal = "";
+            if (!contact) return;
 
-                    if (planIsRange) {
-                        planDateVal = planStartDate;
-                        planEndDateVal = planEndDate;
-                        if (!planDateVal || !planEndDateVal) {
-                            showToast("Please specify start and end dates.");
-                            return;
-                        }
-                        if (planDateVal > planEndDateVal) {
-                            showToast("Start date must be before end date.");
-                            return;
-                        }
-                    } else {
-                        planDateVal = planDate;
-                        if (!planDateVal) {
-                            showToast("Please select a scheduled plan date.");
-                            return;
-                        }
+            let selectedLogDate = logIsRange ? logStartDate : logDate;
+            let selectedLogEndDate = logIsRange ? logEndDate : null;
+
+            if (logIsRange && selectedLogDate > selectedLogEndDate) {
+                showToast("Start date must be before end date.");
+                return;
+            }
+
+            const isFuture = selectedLogDate > TODAY_STR;
+            const notesVal = document.getElementById('shared-log-notes').value.trim();
+            const targetIds = [activeLogId, ...taggedFriendIds];
+
+            // 1. Cleanup Old State Context
+            if (activeLogActionContext === 'edit-history' && activeEditHistoryIndex !== null) {
+                contact.history.splice(activeEditHistoryIndex, 1);
+            } else if (activeLogActionContext === 'edit-plan' || isConsumingUpcoming) {
+                contact.upcoming = null;
+            }
+
+            // 2. Commit New State
+            if (isFuture) {
+                const planActivity = document.getElementById('plan-activity').value.trim() || 'Catch-up';
+                
+                targetIds.forEach(id => {
+                    const targetContact = contacts.find(c => c.id === id);
+                    if (targetContact) {
+                        targetContact.upcoming = {
+                            event: planActivity,
+                            date: selectedLogDate,
+                            endDate: selectedLogEndDate,
+                            notes: notesVal
+                        };
                     }
+                });
 
-                    contact.upcoming = {
-                        event: planActivity,
-                        date: planDateVal,
-                        endDate: planEndDateVal,
-                        notes: planNotes
-                    };
-
-                    showToast("Scheduled plan with " + contact.name + "!");
-                    saveContacts(); // Preserved offline
-                    renderDashboard();
-                    closeModal('log-modal');
-
+                if (targetIds.length > 1) {
+                    showToast("Scheduled group plan successfully!");
                 } else {
-                    const notesVal = document.getElementById('log-notes').value.trim();
-                    let selectedLogDate = "";
-                    let selectedLogEndDate = "";
-
-                    if (logIsRange) {
-                        selectedLogDate = logStartDate;
-                        selectedLogEndDate = logEndDate;
-                        if (!selectedLogDate || !selectedLogEndDate) {
-                            showToast("Please enter both range calendar dates.");
-                            return;
-                        }
-                        if (selectedLogDate > selectedLogEndDate) {
-                            showToast("Start date must be before end date.");
-                            return;
-                        }
-                    } else {
-                        selectedLogDate = logDate;
-                        if (!selectedLogDate) {
-                            showToast("Please enter catch-up calendar date.");
-                            return;
-                        }
-                    }
-
-                    if (!contact.history) contact.history = [];
-                    contact.history.unshift({
-                        date: selectedLogDate,
-                        endDate: selectedLogEndDate || null,
-                        channel: activeChannel,
-                        depth: activeDepth,
-                        notes: notesVal || "Quick catch up"
-                    });
-
-                    if (isConsumingUpcoming) {
-                        contact.upcoming = null;
-                        isConsumingUpcoming = false;
-                    }
-
-                    if (contact.upcoming && contact.upcoming.date <= TODAY_STR) {
-                        contact.upcoming = null; 
-                    }
-
-                    showToast("Logged interaction for " + contact.name + "!");
-                    saveContacts(); // Preserved offline
-                    renderDashboard();
-                    closeModal('log-modal');
+                    showToast(`Scheduled plan with ${contact.name}!`);
                 }
+
+            } else {
+                targetIds.forEach(id => {
+                    const targetContact = contacts.find(c => c.id === id);
+                    if (targetContact) {
+                        const otherParticipants = targetIds
+                            .filter(pId => pId !== id)
+                            .map(pId => contacts.find(c => c.id === pId).name);
+                        
+                        const participantSuffix = otherParticipants.length > 0 ? ` (with ${otherParticipants.join(', ')})` : '';
+
+                        if (!targetContact.history) targetContact.history = [];
+                        targetContact.history.unshift({
+                            date: selectedLogDate,
+                            endDate: selectedLogEndDate,
+                            channel: activeChannel,
+                            depth: activeDepth,
+                            notes: notesVal ? `${notesVal}${participantSuffix}` : `Caught up${participantSuffix}`
+                        });
+                        
+                        if (targetContact.upcoming && targetContact.upcoming.date <= TODAY_STR) {
+                            targetContact.upcoming = null; 
+                        }
+                    }
+                });
+
+                if (activeLogActionContext === 'edit-history') {
+                    showToast("Catch-up log entry modified.");
+                } else if (targetIds.length > 1) {
+                    showToast("Logged group interaction successfully!");
+                } else {
+                    showToast(`Logged interaction for ${contact.name}!`);
+                }
+            }
+
+            isConsumingUpcoming = false;
+            saveContacts();
+            renderDashboard();
+            closeModal('log-modal');
+            
+            // Seamless drawer return if editing from a detailed profile
+            if (activeLogActionContext === 'edit-history' || activeLogActionContext === 'edit-plan') {
+                setTimeout(() => {
+                    openDetailView(contact.id);
+                }, 350);
             }
         }
 
-        // Add a new friend connection
+        function handleSearch(value) {
+            searchQuery = value.trim();
+            const clearBtn = document.getElementById('clear-search-btn');
+            if (searchQuery) {
+                if (clearBtn) clearBtn.classList.remove('hidden');
+            } else {
+                if (clearBtn) clearBtn.classList.add('hidden');
+            }
+            renderDashboard();
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) searchInput.value = '';
+            searchQuery = '';
+            const clearBtn = document.getElementById('clear-search-btn');
+            if (clearBtn) clearBtn.classList.add('hidden');
+            renderDashboard();
+        }
+
+        function toggleStatusFilter(status) {
+            if (activeStatusFilter === status) {
+                activeStatusFilter = null;
+                showToast("Cleared status filter.");
+            } else {
+                activeStatusFilter = status;
+                const statusLabels = { green: 'Tethered', yellow: 'Drifting', red: 'Fading' };
+                showToast(`Filtering by: ${statusLabels[status]}`);
+            }
+            renderDashboard();
+        }
+
+        function toggleHideScheduled() {
+            hideScheduled = !hideScheduled;
+            const btn = document.getElementById('btn-hide-scheduled');
+            const icon = btn.querySelector('i');
+            
+            if (hideScheduled) {
+                if (btn) btn.className = "h-11 w-11 shrink-0 bg-brand-accent text-white border border-brand-accent flex items-center justify-center rounded-2xl transition-all shadow-glow-accent";
+                if (icon) {
+                    icon.className = "w-4.5 h-4.5 text-white";
+                }
+                showToast("Hiding connections with upcoming plans");
+            } else {
+                if (btn) btn.className = "h-11 w-11 shrink-0 bg-white border border-slate-200 hover:bg-slate-50 flex items-center justify-center rounded-2xl transition-all shadow-sm";
+                if (icon) {
+                    icon.className = "w-4.5 h-4.5 text-slate-500";
+                }
+                showToast("Showing all connections");
+            }
+            renderDashboard();
+        }
+
         function submitAddFriend() {
             const nameField = document.getElementById('add-name');
             const locField = document.getElementById('add-location');
@@ -1426,13 +1863,13 @@
 
             showToast(name + " added!");
             closeModal('add-modal');
-            saveContacts(); // Preserved offline
+            saveContacts();
             renderDashboard();
         }
 
-        // Render dashboard people list
         function renderDashboard() {
             const container = document.getElementById('contact-list-container');
+            if (!container) return;
             container.innerHTML = '';
 
             let green = 0, yellow = 0, red = 0;
@@ -1457,8 +1894,10 @@
             });
 
             sorted.forEach(c => {
-                if (c.daysSince >= c.cadence * 1.5) red++;
-                else if (c.daysSince >= c.cadence) yellow++;
+                const driftLimit = c.cadence * (globalSettings.driftThresholdPct / 100);
+                const fadeLimit = c.cadence * (globalSettings.fadeThresholdPct / 100);
+                if (c.daysSince >= fadeLimit) red++;
+                else if (c.daysSince >= driftLimit) yellow++;
                 else green++;
             });
 
@@ -1466,23 +1905,23 @@
             const cardYellow = document.getElementById('card-yellow');
             const cardRed = document.getElementById('card-red');
 
-            cardGreen.className = "bg-white border border-slate-200 p-3 rounded-2xl border-b-4 border-b-brand-green cursor-pointer transition-all hover:scale-102 shadow-sm";
-            cardYellow.className = "bg-white border border-slate-200 p-3 rounded-2xl border-b-4 border-b-brand-yellow cursor-pointer transition-all hover:scale-102 shadow-sm";
-            cardRed.className = "bg-white border border-slate-200 p-3 rounded-2xl border-b-4 border-b-brand-red cursor-pointer transition-all hover:scale-102 shadow-sm";
+            if (cardGreen) cardGreen.className = "bg-white border border-slate-200 p-3 rounded-2xl border-b-4 border-b-brand-green cursor-pointer transition-all hover:scale-102 shadow-sm";
+            if (cardYellow) cardYellow.className = "bg-white border border-slate-200 p-3 rounded-2xl border-b-4 border-b-brand-yellow cursor-pointer transition-all hover:scale-102 shadow-sm";
+            if (cardRed) cardRed.className = "bg-white border border-slate-200 p-3 rounded-2xl border-b-4 border-b-brand-red cursor-pointer transition-all hover:scale-102 shadow-sm";
 
             if (activeStatusFilter) {
                 if (activeStatusFilter === 'green') {
-                    cardGreen.className += " ring-2 ring-brand-accent bg-[#f1f5f9] scale-105 z-10 shadow-glow-accent";
-                    cardYellow.className += " opacity-45 scale-95";
-                    cardRed.className += " opacity-45 scale-95";
+                    if (cardGreen) cardGreen.className += " ring-2 ring-brand-accent bg-[#f1f5f9] scale-105 z-10 shadow-glow-accent";
+                    if (cardYellow) cardYellow.className += " opacity-45 scale-95";
+                    if (cardRed) cardRed.className += " opacity-45 scale-95";
                 } else if (activeStatusFilter === 'yellow') {
-                    cardYellow.className += " ring-2 ring-brand-accent bg-[#f1f5f9] scale-105 z-10 shadow-glow-accent";
-                    cardGreen.className += " opacity-45 scale-95";
-                    cardRed.className += " opacity-45 scale-95";
+                    if (cardYellow) cardYellow.className += " ring-2 ring-brand-accent bg-[#f1f5f9] scale-105 z-10 shadow-glow-accent";
+                    if (cardGreen) cardGreen.className += " opacity-45 scale-95";
+                    if (cardRed) cardRed.className += " opacity-45 scale-95";
                 } else if (activeStatusFilter === 'red') {
-                    cardRed.className += " ring-2 ring-brand-accent bg-[#f1f5f9] scale-105 z-10 shadow-glow-accent";
-                    cardGreen.className += " opacity-45 scale-95";
-                    cardYellow.className += " opacity-45 scale-95";
+                    if (cardRed) cardRed.className += " ring-2 ring-brand-accent bg-[#f1f5f9] scale-105 z-10 shadow-glow-accent";
+                    if (cardGreen) cardGreen.className += " opacity-45 scale-95";
+                    if (cardYellow) cardYellow.className += " opacity-45 scale-95";
                 }
             }
 
@@ -1495,13 +1934,15 @@
 
                 if (activeStatusFilter) {
                     let itemStatus = "green";
-                    if (c.daysSince >= c.cadence * 1.5) itemStatus = "red";
-                    else if (c.daysSince >= c.cadence) itemStatus = "yellow";
+                    const driftLimit = c.cadence * (globalSettings.driftThresholdPct / 100);
+                    const fadeLimit = c.cadence * (globalSettings.fadeThresholdPct / 100);
+
+                    if (c.daysSince >= fadeLimit) itemStatus = "red";
+                    else if (c.daysSince >= driftLimit) itemStatus = "yellow";
                     
                     if (itemStatus !== activeStatusFilter) return false;
                 }
 
-                // Filtering scheduled plans out if requested
                 if (hideScheduled && c.upcoming) {
                     return false;
                 }
@@ -1510,10 +1951,12 @@
             });
 
             const filterLabel = document.getElementById('filter-indicator');
-            if (activeStatusFilter || searchQuery || hideScheduled) {
-                filterLabel.innerHTML = `<span class="text-brand-accent font-bold">Filters Active</span> • <span onclick="resetAllFilters()" class="underline cursor-pointer hover:text-slate-800">Clear All</span>`;
-            } else {
-                filterLabel.innerText = "Tap card for history";
+            if (filterLabel) {
+                if (activeStatusFilter || searchQuery || hideScheduled) {
+                    filterLabel.innerHTML = `<span class="text-brand-accent font-bold">Filters Active</span> • <span onclick="resetAllFilters()" class="underline cursor-pointer hover:text-slate-800">Clear All</span>`;
+                } else {
+                    filterLabel.innerText = "Tap card for history";
+                }
             }
 
             if (displayList.length === 0) {
@@ -1524,9 +1967,12 @@
                         <button onclick="resetAllFilters()" class="text-xs text-brand-accent font-semibold underline">Reset Filters</button>
                     </div>
                 `;
-                document.getElementById('count-green').innerText = green;
-                document.getElementById('count-yellow').innerText = yellow;
-                document.getElementById('count-red').innerText = red;
+                const gCount = document.getElementById('count-green');
+                const yCount = document.getElementById('count-yellow');
+                const rCount = document.getElementById('count-red');
+                if (gCount) gCount.innerText = green;
+                if (yCount) yCount.innerText = yellow;
+                if (rCount) rCount.innerText = red;
                 createIconsSafe();
                 return;
             }
@@ -1536,11 +1982,14 @@
                 let statusPillColor = "bg-brand-green/10 text-brand-green border-brand-green/20 shadow-glow-green";
                 let pulseColor = "bg-brand-green";
 
-                if (c.daysSince >= c.cadence * 1.5) {
+                const driftLimit = c.cadence * (globalSettings.driftThresholdPct / 100);
+                const fadeLimit = c.cadence * (globalSettings.fadeThresholdPct / 100);
+
+                if (c.daysSince >= fadeLimit) {
                     statusText = "Fading";
                     statusPillColor = "bg-brand-red/10 text-brand-red border-brand-red/20 shadow-glow-red";
                     pulseColor = "bg-brand-red";
-                } else if (c.daysSince >= c.cadence) {
+                } else if (c.daysSince >= driftLimit) {
                     statusText = "Drifting";
                     statusPillColor = "bg-brand-yellow/10 text-brand-yellow border-brand-yellow/20 shadow-glow-yellow";
                     pulseColor = "bg-brand-yellow";
@@ -1550,8 +1999,6 @@
                 if (c.upcoming) {
                     statusBadgeText += " • Scheduled";
                 }
-
-                const readableGoal = `Every ${c.unitValue} ${c.unitValue === 1 ? c.unit.slice(0, -1) : c.unit}`;
 
                 const card = document.createElement('div');
                 card.className = "group bg-white rounded-2xl p-4 border border-slate-150 flex flex-col gap-3 cursor-pointer transition-all duration-300 hover:bg-slate-50 hover:border-slate-300 hover:-translate-y-0.5 active:scale-[0.985] shadow-sm";
@@ -1565,10 +2012,11 @@
                 if (c.lastWay === 'Call') iconMarkup = '<i data-lucide="phone" class="w-3.5 h-3.5 inline"></i>';
                 if (c.lastWay === 'In Person') iconMarkup = '<i data-lucide="coffee" class="w-3.5 h-3.5 inline"></i>';
                 if (c.lastWay === 'Video Call') iconMarkup = '<i data-lucide="video" class="w-3.5 h-3.5 inline"></i>';
-                if (c.lastWay === 'Voice Note') iconMarkup = '<i data-lucide="mic" class="w-3.5 h-3.5 inline"></i>';
+                if (c.lastWay === 'Voice Note') iconMarkup = '<i data-lucide="mic" class="w-3.5 h-3.5 inline">5</i>';
 
                 const scheduledDateLabel = c.upcoming ? (c.upcoming.endDate ? formatRangeFriendly(c.upcoming.date, c.upcoming.endDate) : formatFriendlyDate(c.upcoming.date)) : '';
 
+                // REMOVED frequency intervals from friend list card
                 card.innerHTML = `
                     <div class="flex items-start justify-between gap-3 min-w-0">
                         <div class="space-y-1.5 min-w-0 flex-1">
@@ -1586,7 +2034,6 @@
 
                             <div class="flex items-center gap-2 flex-wrap pt-0.5">
                                 <h4 class="font-extrabold text-slate-850 group-hover:text-brand-accent truncate text-sm transition-colors">${c.name}</h4>
-                                <span class="text-[9px] px-1.5 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-600 font-semibold">${readableGoal}</span>
                             </div>
                             
                             <div class="text-[11px] text-brand-muted flex items-center gap-1.5 flex-wrap font-medium">
@@ -1603,7 +2050,7 @@
                             ` : ''}
                         </div>
 
-                        <button onclick="triggerLogMenu(${c.id}, '${c.name}', 'past')" class="bg-slate-5 border border-slate-200 hover:border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold py-2.5 px-3.5 rounded-xl flex items-center gap-1.5 transition-all shrink-0 shadow-sm">
+                        <button onclick="triggerLogMenu(${c.id}, '${c.name}', false)" class="bg-slate-50 border border-slate-200 hover:border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold py-2.5 px-3.5 rounded-xl flex items-center gap-1.5 transition-all shrink-0 shadow-sm">
                             <i data-lucide="check-circle" class="w-4 h-4 text-brand-accent"></i> Log
                         </button>
                     </div>
@@ -1612,14 +2059,16 @@
                 container.appendChild(card);
             });
 
-            document.getElementById('count-green').innerText = green;
-            document.getElementById('count-yellow').innerText = yellow;
-            document.getElementById('count-red').innerText = red;
+            const gCount = document.getElementById('count-green');
+            const yCount = document.getElementById('count-yellow');
+            const rCount = document.getElementById('count-red');
+            if (gCount) gCount.innerText = green;
+            if (yCount) yCount.innerText = yellow;
+            if (rCount) rCount.innerText = red;
 
             createIconsSafe();
         }
 
-        // Reset all active filters
         function resetAllFilters() {
             clearSearch();
             activeStatusFilter = null;
@@ -1627,19 +2076,20 @@
             
             const btn = document.getElementById('btn-hide-scheduled');
             const icon = btn.querySelector('i');
-            btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[11px] font-semibold text-slate-600 transition-all shadow-sm";
+            if (btn) btn.className = "h-11 w-11 shrink-0 bg-white border border-slate-200 hover:bg-slate-50 flex items-center justify-center rounded-2xl transition-all shadow-sm";
             if (icon) {
-                icon.className = "w-3.5 h-3.5 text-slate-400";
+                icon.className = "w-4.5 h-4.5 text-slate-550";
             }
             
             showToast("Cleared all list filters!");
             renderDashboard();
         }
 
-        // Show Toast Pop-up Info Alerts
         function showToast(msg) {
             const toast = document.getElementById('toast');
-            document.getElementById('toast-message').innerText = msg;
+            if (!toast) return;
+            const toastMsg = document.getElementById('toast-message');
+            if (toastMsg) toastMsg.innerText = msg;
             toast.classList.remove('opacity-0', 'pointer-events-none');
             toast.classList.add('opacity-100');
             setTimeout(() => {
@@ -1648,16 +2098,17 @@
             }, 3000);
         }
 
-        // Tab Simulator switcher
         function switchTab(tab) {
-            document.getElementById('view-people').classList.add('hidden');
-            document.getElementById('view-settings').classList.add('hidden');
+            const viewPeople = document.getElementById('view-people');
+            const viewSettings = document.getElementById('view-settings');
+            if (viewPeople) viewPeople.classList.add('hidden');
+            if (viewSettings) viewSettings.classList.add('hidden');
 
             if (tab === 'people') {
-                document.getElementById('view-people').classList.remove('hidden');
+                if (viewPeople) viewPeople.classList.remove('hidden');
                 renderDashboard();
             } else if (tab === 'settings') {
-                document.getElementById('view-settings').classList.remove('hidden');
+                if (viewSettings) viewSettings.classList.remove('hidden');
             }
 
             document.querySelectorAll('nav p, nav button').forEach(btn => btn.className = 'flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-all');
@@ -1668,8 +2119,18 @@
             createIconsSafe();
         }
 
-        // Run Initialized Application Render
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('tag-suggestions-dropdown');
+            const searchInput = document.getElementById('tag-search-input');
+            if (dropdown && !dropdown.classList.contains('hidden')) {
+                if (e.target !== searchInput && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            }
+        });
+
         window.onload = function() {
+            initSettingsUI();
             renderDashboard();
         }
     </script>
